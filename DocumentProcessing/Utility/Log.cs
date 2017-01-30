@@ -12,6 +12,7 @@ namespace DocumentProcessing.Utility
     /// This class maintains the error log and sends the email notification if error occurs in a document
     /// test
     /// abc
+    /// 123
     /// </summary>
     public class Log
     {
