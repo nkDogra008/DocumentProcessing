@@ -32,6 +32,7 @@ namespace DocumentProcessing.Utility
             OcrNotFound = 0,
             Datacap,
             Abbyy,
+            Aspire
 
         }//OcrTypes
     }
