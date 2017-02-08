@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace DocumentProcessing.Utility
 {
+    /// <summary>
+    /// CommonData
+    /// </summary>
     public class CommonData
     {
         /// <summary>
