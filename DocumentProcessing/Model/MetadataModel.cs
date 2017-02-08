@@ -22,7 +22,7 @@ namespace DocumentProcessing.Model
 
         }
         /// <summary>
-        /// This method returns rows from Metadata table filtered by OcrId
+        /// This method returns rows from Metadata table filtered by MetadataTypeId
         /// </summary>
         /// <param name="OcrId"></param>
         /// <returns></returns>

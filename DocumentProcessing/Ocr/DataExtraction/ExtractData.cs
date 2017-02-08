@@ -8,6 +8,9 @@ using DocumentProcessing;
 using DocumentProcessing.Utility;
 using DocumentProcessing.View;
 using System.Threading;
+using DocumentProcessing.Model;
+using System.Collections.Generic;
+
 
 namespace DocumentProcessing.Ocr.DataExtraction
 {
@@ -45,6 +48,14 @@ namespace DocumentProcessing.Ocr.DataExtraction
             try
             {
                 //Logic of getting metadata depending on type (document type)
+                //Srishti
+                DocumentAttributes attributes = new DocumentAttributes();
+                DocumentAttributeModel attributeModel = new DocumentAttributeModel();
+                List<DocumentAttributes> attributeList1 = null;
+                List<DocumentAttributes> attributeList2 = null;
+                attributeList1 =attributeModel.getAllAttributes();
+                attributeList2 = attributeModel.getAttributesList("pan");
+
                 List<string> listOfAtttributesToGet = new List<string>();
 
                 DirectoryInfo dirInfo = new DirectoryInfo(_fileLocation);
