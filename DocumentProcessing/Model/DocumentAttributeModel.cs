@@ -23,7 +23,7 @@ namespace DocumentProcessing.Model
         }//DocumentAttributeModel
 
         /// <summary>
-        /// getAttributesList
+        /// Get all required Attributes based upon document type (eg invoice,Passport etc)
         /// </summary>
         /// <param name="AttributeId"></param>
         /// <returns></returns>
@@ -46,7 +46,32 @@ namespace DocumentProcessing.Model
                 }
             }
             return listAttributes;
-        }
+        }//getAttributesList(string metadataName)
+
+        /// <summary>
+        /// This method gets all attributes
+        /// </summary>
+        /// <returns></returns>
+        public List<DocumentAttributes> getAllAttributes()
+        {
+            List<DocumentAttributes> listAttributes = new List<DocumentAttributes>();
+            DocumentAttributes attributes;
+            IDataReader reader;
+
+            string spName = "sp_getAllAttributes";
+            DbCommand dbCommand = _dbConnection.GetStoredProcCommand(spName);
+            using (reader = _dbConnection.ExecuteReader(dbCommand))
+            {
+                while (reader.Read())
+                {
+                    attributes = new DocumentAttributes();
+                    attributes.AttributeId= reader.GetInt32(reader.GetOrdinal("AttributeId")); 
+                    attributes.AttributeName = reader.GetString(reader.GetOrdinal("AttributeName"));
+                    listAttributes.Add(attributes);
+                }
+            }
+            return listAttributes;
+        }//getAllAttributes()
 
     }//DocumentAttributeModel
 }
