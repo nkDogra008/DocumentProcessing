@@ -21,7 +21,7 @@ namespace DocumentProcessing.View
         }//Metadata
 
         /// <summary>
-        /// 
+        /// Unique Id for each Metadata
         /// </summary>
         public int MetadataId { get; set; }
 

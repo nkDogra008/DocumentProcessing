@@ -128,7 +128,7 @@ namespace DocumentProcessing.DocumentProcess
             catch (Exception ex)
             {
 
-                //Log error
+                Log.FileLog(Common.LogType.Error,ex.ToString());
             }
 
         }//StartAbbyThread

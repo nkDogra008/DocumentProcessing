@@ -3,12 +3,8 @@ using DocumentProcessing.View;
 using Microsoft.Exchange.WebServices.Data;
 using Outlook = Microsoft.Office.Interop.Outlook;
 using Exception = System.Exception;
-
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -130,7 +126,7 @@ namespace DocumentProcessing.Controller
 
 
         }
-
+       
         /// <summary>
         /// Method to get attachment from exchange server
         /// </summary>
@@ -154,6 +150,8 @@ namespace DocumentProcessing.Controller
                 FindItemsResults<Item> findResults = mailSearchController.MailSearchCriteria(_mailSearchCondition, exchangeService);
 
                 //Loops for all mails in the variable 
+                Metadata m = new Metadata();
+                string[] s = m.Format.Split(',');
                 foreach (Item item in findResults)
                 {
 
@@ -173,8 +171,8 @@ namespace DocumentProcessing.Controller
 
                             //Checks the extension type
                             // Check dynamically
-                            if (extension == "pdf" || extension == "txt" || extension == "jpg" || 
-                                extension == "jpeg" || extension == "PNG" || extension == "png")
+                            if (extension == s[0] || extension == s[1] || extension == s[2] || 
+                                extension == s[3] || extension == s[4] || extension == s[5])
                             {
                                 //Stores the attachment in a variable
                                 FileAttachment fileAttachment = attachment as FileAttachment;
@@ -311,6 +309,8 @@ namespace DocumentProcessing.Controller
         /// <param name="folder">Inbox is passed</param>
         private void IterateMessages(Outlook.Folder folder)
         {
+            Metadata m = new Metadata();
+            string[] s = m.Format.Split(',');
             try
             {
                 //string mailsearch = "saswat";
@@ -319,7 +319,7 @@ namespace DocumentProcessing.Controller
                 var fi = folder.Items;
 
                 //Attachment extensions to save are stored in an array
-                string[] extensionsArray = { ".jpg", ".jpeg", ".pdf", ".png", ".PNG", ".txt" };
+            //    string[] extensionsArray = { ".jpg", ".jpeg", ".pdf", ".png", ".PNG", ".txt" };
 
                 //This block contains the code to download the attachments
                 //Checks condition for folder items to be null
@@ -341,7 +341,7 @@ namespace DocumentProcessing.Controller
                             for (int i = 1; i < attachments.Count; i++)
                             {
                                 //Checks for the extension in the attachments
-                                if (extensionsArray.Any(attachments[i].FileName.Contains))
+                                if (s.Any(attachments[i].FileName.Contains))
                                 {
                                     //Saves the attachment into the filepath
                                     attachments[i].SaveAsFile(_saveAttachmentPath + attachments[i].FileName);

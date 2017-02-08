@@ -1,4 +1,5 @@
-﻿using DocumentProcessing.View;
+﻿using DocumentProcessing.Utility;
+using DocumentProcessing.View;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace DocumentProcessing.Model
             }
             catch (Exception ex)
             {
-
+                Log.FileLog(Common.LogType.Error,ex.ToString());
             }
 
             return listMailSearch;
