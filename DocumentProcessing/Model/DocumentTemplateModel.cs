@@ -16,6 +16,9 @@ namespace DocumentProcessing.Model
     /// </summary>
     class DocumentTemplateModel : SqlFactory
     {
+        /// <summary>
+        /// Inherit factory object from sqlFactory class and get all DocumentTemplate related data from database
+        /// </summary>
         public DocumentTemplateModel()
         {
 
@@ -29,7 +32,7 @@ namespace DocumentProcessing.Model
         /// <returns></returns>
         public List<DocumentTemplate> GetDocTemplateByType(int docType, Common.OcrType ocrType)
         {
-            List<DocumentTemplate> DocTemplate = null;
+            List<DocumentTemplate> listDocTemplate = null;
             IDataReader reader;
             DocumentTemplate doctemplate;
             try
@@ -45,7 +48,7 @@ namespace DocumentProcessing.Model
                         doctemplate.OcrTypeId = (Common.OcrType)reader.GetInt32(reader.GetOrdinal("OcrID"));
                         doctemplate.AttributeId = reader.GetInt32(reader.GetOrdinal("AttributeID"));
                         doctemplate.LineNo = reader.GetInt32(reader.GetOrdinal("LineNumber"));
-                        DocTemplate.Add(doctemplate);
+                        listDocTemplate.Add(doctemplate);
                     }
                 }
             }
@@ -54,11 +57,7 @@ namespace DocumentProcessing.Model
                 Log.FileLog(Common.LogType.Error, ex.ToString());
 
             }
-            return DocTemplate;
-        }
-
-
-        //Implementation pending
-
+            return listDocTemplate;
+        }//listDocTemplate
     }//DocumentTemplateModel
 }

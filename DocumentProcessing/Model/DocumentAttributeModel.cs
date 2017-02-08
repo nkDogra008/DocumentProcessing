@@ -15,7 +15,7 @@ namespace DocumentProcessing.Model
     class DocumentAttributeModel : SqlFactory
     {
         /// <summary>
-        /// 
+        /// inherit factory object from sqlFactory class and get all attribute related data from database
         /// </summary>
         public DocumentAttributeModel()
         {
@@ -27,7 +27,7 @@ namespace DocumentProcessing.Model
         /// </summary>
         /// <param name="AttributeId"></param>
         /// <returns></returns>
-        public List<DocumentAttributes> getAttributesList(int AttributeId)
+        public List<DocumentAttributes> getAttributesList(string metadataName)
         {
             List<DocumentAttributes> listAttributes = new List<DocumentAttributes>();
             DocumentAttributes attributes;
@@ -35,13 +35,12 @@ namespace DocumentProcessing.Model
 
             string spName = "sp_getAttributesList";
             DbCommand dbCommand = _dbConnection.GetStoredProcCommand(spName);
-            _dbConnection.AddInParameter(dbCommand, "AttributeId", DbType.Int32, AttributeId);
+            _dbConnection.AddInParameter(dbCommand, "Name", DbType.String, metadataName);
             using (reader = _dbConnection.ExecuteReader(dbCommand))
             {
                 while (reader.Read())
                 {
                     attributes = new DocumentAttributes();
-                    attributes.AttributeId = reader.GetInt32(reader.GetOrdinal("AttributeId"));
                     attributes.AttributeName = reader.GetString(reader.GetOrdinal("AttributeName"));
                     listAttributes.Add(attributes);
                 }
