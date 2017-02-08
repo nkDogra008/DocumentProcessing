@@ -39,6 +39,7 @@ namespace DocumentProcessing.Model
             {
                 string spName = "sp_getDocTemplateDetails";
                 DbCommand dbCommand = _dbConnection.GetStoredProcCommand(spName);
+                _dbConnection.AddInParameter(dbCommand, "OcrID", DbType.String, ocrType);
                 using (reader = _dbConnection.ExecuteReader(dbCommand))
                 {
                     while (reader.Read())
