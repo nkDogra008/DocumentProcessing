@@ -24,15 +24,15 @@ namespace DocumentProcessing.Controller
         /// </summary>
         /// <param name="AttributeId"></param>
         /// <returns></returns>
-        public List<DocumentAttributes> getAttributesList(string MetadataName)
+        public List<DocumentAttributes> getAttributesList(string documentType)
         {
             List<DocumentAttributes> documentAttributes = null;
             try
             {
-                if (MetadataName != null)
+                if (documentType != null)
                 {
                     DocumentAttributeModel attributeModel = new DocumentAttributeModel();
-                    documentAttributes = attributeModel.getAttributesList(MetadataName);
+                    documentAttributes = attributeModel.getAttributesList(documentType);
                 }
             }
             catch (Exception ex)

@@ -22,9 +22,14 @@ namespace DocumentProcessing.View
         public string AttributeName { get; set; }
 
         /// <summary>
-        /// Gets Attribute Id of specific attribute
+        /// Gets Attribute Id of specific document
         /// </summary>
         public int AttributeId { get; set; }
+
+        /// <summary>
+        /// Gets Id of specific attribute
+        /// </summary>
+        public int A_Id { get; set; }
 
 
 

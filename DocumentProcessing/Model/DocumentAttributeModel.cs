@@ -27,7 +27,7 @@ namespace DocumentProcessing.Model
         /// </summary>
         /// <param name="AttributeId"></param>
         /// <returns></returns>
-        public List<DocumentAttributes> getAttributesList(string metadataName)
+        public List<DocumentAttributes> getAttributesList(string documentName)
         {
             List<DocumentAttributes> listAttributes = new List<DocumentAttributes>();
             DocumentAttributes attributes;
@@ -35,7 +35,7 @@ namespace DocumentProcessing.Model
 
             string spName = "sp_getAttributesList";
             DbCommand dbCommand = _dbConnection.GetStoredProcCommand(spName);
-            _dbConnection.AddInParameter(dbCommand, "Name", DbType.String, metadataName);
+            _dbConnection.AddInParameter(dbCommand, "Name", DbType.String, documentName);
             using (reader = _dbConnection.ExecuteReader(dbCommand))
             {
                 while (reader.Read())
@@ -65,6 +65,7 @@ namespace DocumentProcessing.Model
                 while (reader.Read())
                 {
                     attributes = new DocumentAttributes();
+                    attributes.AttributeId = reader.GetInt32(reader.GetOrdinal("AId"));
                     attributes.AttributeId= reader.GetInt32(reader.GetOrdinal("AttributeId")); 
                     attributes.AttributeName = reader.GetString(reader.GetOrdinal("AttributeName"));
                     listAttributes.Add(attributes);
