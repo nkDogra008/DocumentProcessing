@@ -47,5 +47,6 @@ namespace DocumentProcessing.View
         public string Password { get; set; }
         #endregion Properties
 
+        public string Domain { get; set; }
     }//MailServerDetailView
 }

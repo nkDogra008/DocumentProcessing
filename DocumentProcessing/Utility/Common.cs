@@ -23,13 +23,23 @@ namespace DocumentProcessing.Utility
             ApplicationError
         }//LogType
 
+        public enum ServerType
+        {
+            ExchangeServer,
+            Outlook,
+            Other
+
+        }//LogType
+
+
+
         /// <summary>
         /// Specifies the type of OCR
         /// </summary>
         public enum OcrType
         {
             // Can be used if no performance is available to compare
-            OcrNotFound = 0,
+            OcrNotFound = 1,
             Datacap,
             Abbyy,
             Aspire

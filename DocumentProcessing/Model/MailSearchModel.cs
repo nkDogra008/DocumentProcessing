@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DocumentProcessing.View;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,7 +17,22 @@ namespace DocumentProcessing.Model
 
         }//MailSearchModel
 
-        //Implementation pending
+        public List<MailSearch> GetAllMailSearchDetails()
+        {
+            List<MailSearch> listMailSearch = new List<MailSearch>();
+
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return listMailSearch;
+
+        }
 
     }//MailSearchModel
 }//MailSearchModel

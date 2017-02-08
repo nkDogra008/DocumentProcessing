@@ -4,23 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DocumentProcessing.View
+namespace DocumentProcessing.Utility
 {
-    public class MailCriteria
+    public class CommonData
     {
         /// <summary>
-        /// 
+        /// Default Constructor
         /// </summary>
-        public int CriteriaId { get; set; }
+        public CommonData()
+        {
 
+        }//CommonData
         /// <summary>
         /// 
         /// </summary>
-        public int MailSearchId { get; set; }
-
+        public string AttributeName { get; set; }
         /// <summary>
         /// 
         /// </summary>
-        public string Criteria { get; set; }
-    }//MailCriteria
+        public string MetadataName { get; set; }
+    }
 }
