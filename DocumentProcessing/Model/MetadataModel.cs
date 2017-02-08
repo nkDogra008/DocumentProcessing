@@ -31,7 +31,7 @@ namespace DocumentProcessing.Model
             List<Metadata> listMetadata = new List<Metadata>();
             Metadata metadata;
             IDataReader reader;
-
+           
             string spName = "sp_getMetadataDetails";
             DbCommand dbCommand = _dbConnection.GetStoredProcCommand(spName);
             _dbConnection.AddInParameter(dbCommand, "MetadataTypeId", DbType.Int32, MetadataTypeId);
@@ -45,8 +45,7 @@ namespace DocumentProcessing.Model
                     metadata.Format = reader.GetString(reader.GetOrdinal("Format"));
                     metadata.AttributeName = reader.GetString(reader.GetOrdinal("AttributeName"));
                     listMetadata.Add(metadata);
-                    Console.Write(metadata.MetadataName);
-
+                    
                 }
 
             }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DocumentProcessing.Utility;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,7 @@ namespace DocumentProcessing.View
     /// <summary>
     /// 
     /// </summary>
-    class Metadata 
+    class Metadata: CommonData
     {
         /// <summary>
         /// 
