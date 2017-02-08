@@ -12,7 +12,7 @@ namespace DocumentProcessing.Model
     /// <summary>
     /// 
     /// </summary>
-    class MetadataModel : SQLFactory
+    class MetadataModel : SqlFactory
     {
         /// <summary>
         /// Default Constructor

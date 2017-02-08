@@ -12,7 +12,7 @@ namespace DocumentProcessing.Model
     /// <summary>
     /// To get and store attributes related data from database
     /// </summary>
-    class DocumentAttributeModel : CommonData
+    class DocumentAttributeModel : SqlFactory
     {
         /// <summary>
         /// 
