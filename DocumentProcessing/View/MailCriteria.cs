@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DocumentProcessing.View
 {
-    class MailCriteria
+    public class MailCriteria
     {
         /// <summary>
         /// 

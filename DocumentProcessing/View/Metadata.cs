@@ -9,7 +9,7 @@ namespace DocumentProcessing.View
     /// <summary>
     /// 
     /// </summary>
-    class Metadata
+    class Metadata 
     {
         /// <summary>
         /// 

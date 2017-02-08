@@ -30,6 +30,37 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AbbyyOnlineSdk">
+      <HintPath>..\..\..\Users\narender\Downloads\dotNet (5)\ConsoleTest\bin\Debug\AbbyyOnlineSdk.dll</HintPath>
+    </Reference>
+    <Reference Include="asprise-ocr-api">
+      <HintPath>..\..\..\New folder\Visual Studio 2015\Projects\TestApp\OCR Testing\bin\Debug\asprise-ocr-api.dll</HintPath>
+    </Reference>
+    <Reference Include="asprise-ocr-dll-bundle-32">
+      <HintPath>..\..\..\New folder\Visual Studio 2015\Projects\TestApp\OCR Testing\bin\Debug\asprise-ocr-dll-bundle-32.dll</HintPath>
+    </Reference>
+    <Reference Include="asprise-ocr-dll-bundle-64">
+      <HintPath>..\..\..\New folder\Visual Studio 2015\Projects\TestApp\OCR Testing\bin\Debug\asprise-ocr-dll-bundle-64.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Exchange.WebServices, Version=15.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Exchange.WebServices.2.2\lib\40\Microsoft.Exchange.WebServices.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Exchange.WebServices.Auth, Version=15.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Exchange.WebServices.2.2\lib\40\Microsoft.Exchange.WebServices.Auth.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Data, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\EnterpriseLibrary.Data.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NDesk.Options">
+      <HintPath>..\..\..\Users\narender\Downloads\dotNet (5)\ConsoleTest\bin\Debug\NDesk.Options.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -47,6 +78,7 @@
     <Compile Include="Controller\MetadataController.cs" />
     <Compile Include="Controller\NamedSearchAttributeController.cs" />
     <Compile Include="Controller\PerformanceCheckController.cs" />
+    <Compile Include="DocumentProcessing.cs" />
     <Compile Include="Model\DocumentAttributeModel.cs" />
     <Compile Include="Model\DocumentTemplateModel.cs" />
     <Compile Include="Model\MailCriteriaModel.cs" />
@@ -54,11 +86,20 @@
     <Compile Include="Model\MetadataModel.cs" />
     <Compile Include="Model\NamedSearchAttributeModel.cs" />
     <Compile Include="Model\PerformanceCheckModel.cs" />
+    <Compile Include="Ocr\AbbyyOcr\AbbbyOcrProcessingunit.cs" />
+    <Compile Include="Ocr\AspireOcr\AspireOcrProcessingUnit.cs" />
+    <Compile Include="Ocr\DataExtraction\ExtractData.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Utility\Common.cs" />
     <Compile Include="Controller\MailServerDetailController.cs" />
     <Compile Include="Model\MailServerDetailModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\Log.cs" />
+    <Compile Include="Utility\SqlFactory.cs" />
     <Compile Include="View\DocumentAttributes.cs" />
     <Compile Include="View\DocumentTemplate.cs" />
     <Compile Include="View\MailCriteria.cs" />
@@ -69,7 +110,62 @@
     <Compile Include="View\NamedSearchAttributes.cs" />
     <Compile Include="View\PerformanceCheck.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="Microsoft.Office.Core">
+      <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>7</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="Microsoft.Office.Interop.Excel">
+      <Guid>{00020813-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>8</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="Microsoft.Office.Interop.Outlook">
+      <Guid>{00062FFF-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>9</VersionMajor>
+      <VersionMinor>5</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="stdole">
+      <Guid>{00020430-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="VBIDE">
+      <Guid>{0002E157-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>5</VersionMajor>
+      <VersionMinor>3</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
