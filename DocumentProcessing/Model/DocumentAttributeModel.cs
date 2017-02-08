@@ -23,7 +23,7 @@ namespace DocumentProcessing.Model
         }//DocumentAttributeModel
 
         /// <summary>
-        /// 
+        /// getAttributesList
         /// </summary>
         /// <param name="AttributeId"></param>
         /// <returns></returns>
