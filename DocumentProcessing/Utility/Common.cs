@@ -6,8 +6,14 @@ using System.Threading.Tasks;
 
 namespace DocumentProcessing.Utility
 {
+    /// <summary>
+    /// To access common objects 
+    /// </summary>
     public class Common
     {
+        /// <summary>
+        /// Default Constructor
+        /// </summary>
         public Common()
         {
 
@@ -31,8 +37,6 @@ namespace DocumentProcessing.Utility
 
         }//LogType
 
-
-
         /// <summary>
         /// Specifies the type of OCR
         /// </summary>
@@ -45,5 +49,16 @@ namespace DocumentProcessing.Utility
             Aspire
 
         }//OcrTypes
-    }
+
+        /// <summary>
+        /// Gets and sets attribute name 
+        /// </summary>
+        public string AttributeName { get; set; }
+
+        /// <summary>
+        /// Gets and sets Metadata name
+        /// </summary>
+        public string Name { get; set; }
+
+    }//Common
 }

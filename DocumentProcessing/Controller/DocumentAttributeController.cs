@@ -10,10 +10,13 @@ using System.Threading.Tasks;
 namespace DocumentProcessing.Controller
 {
     /// <summary>
-    /// To approach document attribute controller
+    /// To interact with DocumentAttributeModel and DocumentAtributes
     /// </summary>
     class DocumentAttributeController : Log
     {
+        /// <summary>
+        /// Default Constructor
+        /// </summary>
         public DocumentAttributeController()
         {
 
@@ -22,7 +25,7 @@ namespace DocumentProcessing.Controller
         /// <summary>
         /// This method gets the required attributes depending upon document type(eg:Invoice,Aadhar etc)
         /// </summary>
-        /// <param name="AttributeId"></param>
+        /// <param name="documentType"></param>Type of the document(eg:Invoice,Aadhar etc)
         /// <returns></returns>
         public List<DocumentAttributes> getAttributesList(string documentType)
         {

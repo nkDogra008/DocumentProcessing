@@ -11,27 +11,28 @@ namespace DocumentProcessing.View
     /// </summary>
     class DocumentAttributes
     {
+        /// <summary>
+        /// Default Constructor
+        /// </summary>
         public DocumentAttributes()
         {
 
         }//DocumentAttributes
 
         /// <summary>
-        /// Gets and sets document attribute
+        /// Gets and sets document attribute name
         /// </summary>
         public string AttributeName { get; set; }
 
         /// <summary>
-        /// Gets Attribute Id of specific document
+        /// Gets and sets Attribute Id of specific document
         /// </summary>
         public int AttributeId { get; set; }
 
         /// <summary>
-        /// Gets Id of specific attribute
+        /// Gets and sets id of specific attribute
         /// </summary>
         public int A_Id { get; set; }
-
-
 
     }//DocumentAttributes
 }

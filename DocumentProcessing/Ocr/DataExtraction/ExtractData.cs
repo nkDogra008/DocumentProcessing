@@ -48,13 +48,14 @@ namespace DocumentProcessing.Ocr.DataExtraction
             try
             {
                 //Logic of getting metadata depending on type (document type)
-                //Srishti
-                DocumentAttributes attributes = new DocumentAttributes();
+
+                //Srishti              
                 DocumentAttributeModel attributeModel = new DocumentAttributeModel();
-                List<DocumentAttributes> attributeList1 = null;
-                List<DocumentAttributes> attributeList2 = null;
-                attributeList1 =attributeModel.getAllAttributes();
-                attributeList2 = attributeModel.getAttributesList("pan");
+                //List<DocumentAttributes> attributeList1 = null;
+                List<DocumentAttributes> attributeList = null;
+                //attributeList1 =attributeModel.getAllAttributes();
+                attributeList = attributeModel.getAttributesList("pan");
+                //
 
                 List<string> listOfAtttributesToGet = new List<string>();
 
@@ -90,10 +91,16 @@ namespace DocumentProcessing.Ocr.DataExtraction
                                         // Example there is attribute present on document
                                         if (!file.Name.Contains("PAN"))
                                         {
+                                            //Srishti
+                                            attributeList = attributeModel.getAttributesList("pan");
+                                            //
                                             listOfAtttributesToGet = new List<string>() { "Name*", "Date of Birth*", "Mother's Name*", "Name of Spouse", "Country Of Birth", "UID",
                                             "Grand Total","Amount","Order ID:","Sold By","Order Date:","VAT/TIN:","Service tax #:","Invoice Date:"
                                         };
-                                            foreach (var attribute in listOfAtttributesToGet)
+                                            //Srishti
+                                                foreach (DocumentAttributes attributes in attributeList)
+                                            //
+                                                foreach (var attribute in listOfAtttributesToGet)
                                             {
                                                 if (eachLineInFile.Contains(attribute))
                                                 {

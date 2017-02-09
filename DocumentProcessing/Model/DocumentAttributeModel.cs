@@ -10,12 +10,13 @@ using DocumentProcessing.Utility;
 namespace DocumentProcessing.Model
 {
     /// <summary>
-    /// To get and store attributes related data from database
+    /// To manage DocumentAttributes
     /// </summary>
     class DocumentAttributeModel : SqlFactory
     {
         /// <summary>
-        /// inherit factory object from sqlFactory class and get all attribute related data from database
+        /// Inherit factory object from SqlFactory class and get all attribute related data from database
+        /// Default Constructor
         /// </summary>
         public DocumentAttributeModel()
         {
@@ -23,11 +24,11 @@ namespace DocumentProcessing.Model
         }//DocumentAttributeModel
 
         /// <summary>
-        /// Get all required Attributes based upon document type (eg invoice,Passport etc)
+        /// This method gets all required Attributes based upon document type(eg invoice,Passport etc)
         /// </summary>
-        /// <param name="AttributeId"></param>
+        /// <param name="documentType"></param>Type of the document(eg:Invoice,Aadhar etc)
         /// <returns></returns>
-        public List<DocumentAttributes> getAttributesList(string documentName)
+        public List<DocumentAttributes> getAttributesList(string documentType)
         {
             List<DocumentAttributes> listAttributes = new List<DocumentAttributes>();
             DocumentAttributes attributes;
@@ -35,7 +36,7 @@ namespace DocumentProcessing.Model
 
             string spName = "sp_getAttributesList";
             DbCommand dbCommand = _dbConnection.GetStoredProcCommand(spName);
-            _dbConnection.AddInParameter(dbCommand, "Name", DbType.String, documentName);
+            _dbConnection.AddInParameter(dbCommand, "Name", DbType.String, documentType);
             using (reader = _dbConnection.ExecuteReader(dbCommand))
             {
                 while (reader.Read())

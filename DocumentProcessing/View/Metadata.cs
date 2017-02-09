@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 namespace DocumentProcessing.View
 {
     /// <summary>
-    /// 
+    ///  To get or set different types of metadata
+    ///  Inherits objects from Common class
     /// </summary>
-    class Metadata: CommonData
+    class Metadata : Common
     {
         /// <summary>
-        /// 
+        /// Default Constructor
         /// </summary>
         public Metadata()
         {
@@ -21,27 +22,27 @@ namespace DocumentProcessing.View
         }//Metadata
 
         /// <summary>
-        /// Unique Id for each Metadata
+        /// Gets and sets unique Id for each Metadata
         /// </summary>
         public int MetadataId { get; set; }
 
         /// <summary>
-        /// 
+        /// Gets and sets document type(eg. Invoice,Aadhaar etc)
         /// </summary>
         public string Type { get; set; }
 
         /// <summary>
-        /// 
+        /// Gets and sets document format
         /// </summary>
         public string Format { get; set; }
 
         /// <summary>
-        /// 
+        /// Gets and sets unique Id for each MetadataType
         /// </summary>
         public int MetadataTypeId { get; set; }
 
         /// <summary>
-        /// 
+        /// Gets and sets unique Id for each Document Type
         /// </summary>
         public int AttributeId { get; set; }
 

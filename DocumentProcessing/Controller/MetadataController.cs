@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace DocumentProcessing.Controller
 {
     /// <summary>
-    /// 
+    /// To interact with MetadataModel and Metadata
     /// </summary>
     class MetadataController : Log
     {
@@ -25,7 +25,7 @@ namespace DocumentProcessing.Controller
         /// <summary>
         /// This method returns rows from Metadata table filtered by MetadataTypeId
         /// </summary>
-        /// <param name="MetadataTypeId"></param>
+        /// <param name="MetadataTypeId"></param>Unique Id for each Document Type (eg Invoice,Aadhaar etc)
         /// <returns></returns>
         public List<Metadata> getMetadataByTypeId(int MetadataTypeId)
         {
