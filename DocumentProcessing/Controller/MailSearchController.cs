@@ -66,7 +66,7 @@ namespace DocumentProcessing.Controller
                 foreach (KeyValuePair<string, string> keyValue in dictSearchMailCriteria)
                 {
 
-                    string mailsearch = "Demo";
+                    string mailsearch = PhraseToSearch;
                     //Subject filter criteria
                     //A local variable subjectFilter stores the subject filter pattern passed from the database
                     SearchFilter.ContainsSubstring subjectFilter = new SearchFilter.ContainsSubstring(ItemSchema.Subject, mailsearch, ContainmentMode.Substring, ComparisonMode.IgnoreCase);
@@ -140,7 +140,7 @@ namespace DocumentProcessing.Controller
         /// 
         /// </summary>
         /// <returns></returns>
-        public List<MailSearch> GetAllMailSearchDetails()
+        public List<MailSearch>GetAllMailSearchDetails()
         {
             List<MailSearch> listMailSearch = new List<MailSearch>();
             try
