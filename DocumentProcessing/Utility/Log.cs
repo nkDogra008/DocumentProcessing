@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
 
-
+/// <summary>
+/// Utility file
+/// </summary>
 
 namespace DocumentProcessing.Utility
 {
