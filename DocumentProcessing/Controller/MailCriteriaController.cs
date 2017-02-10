@@ -1,4 +1,5 @@
 ﻿using DocumentProcessing.Model;
+using DocumentProcessing.Utility;
 using DocumentProcessing.View;
 using System;
 using System.Collections.Generic;
@@ -9,36 +10,22 @@ using System.Threading.Tasks;
 namespace DocumentProcessing.Controller
 {
     /// <summary>
-    /// 
+    /// To interact with MailCriteriaModel and MailCriteria
     /// </summary>
-    class MailCriteriaController
+    class MailCriteriaController:Log
     {
         /// <summary>
-        /// 
+        /// Default Constructor
         /// </summary>
         public MailCriteriaController()
         {
 
         }//MailCriteriaController
-
+      
         /// <summary>
-        /// 
+        /// This method gets Mail Search Criteria Details
         /// </summary>
         /// <returns></returns>
-        public List<MailCriteria> GetAllMailCriteriaDetails()
-        {
-            List<MailCriteria> listMailCriteria = null;
-            try
-            {
-                MailCriteriaModel mailCriteriaModel = new MailCriteriaModel();
-                listMailCriteria = mailCriteriaModel.GetAllMailCriteriaDetails();
-            }
-            catch (Exception ex)
-            {
-            }
-            return listMailCriteria;
-        }//GetAllMailSearchDetails
-
         public Dictionary<string, string> GetMailSearchCriteria()
         {
             Dictionary<string, string> dictMailSearchCriteria = null;
@@ -49,13 +36,10 @@ namespace DocumentProcessing.Controller
             }
             catch (Exception ex)
             {
-
+                Log.FileLog(Common.LogType.Error, ex.ToString());
             }
             return dictMailSearchCriteria;
         }
-
-
-
 
     }//MailCriteriaController
 }

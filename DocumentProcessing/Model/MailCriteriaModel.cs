@@ -27,22 +27,6 @@ namespace DocumentProcessing.Model
         /// 
         /// </summary>
         /// <returns></returns>
-        public List<MailCriteria> GetAllMailCriteriaDetails()
-        {
-            List<MailCriteria> listMailCriteria = new List<MailCriteria>();
-            try
-            {
-            }
-            catch (Exception ex)
-            {
-            }
-            return listMailCriteria;
-        }//GetAllMailSearchDetails
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
         public Dictionary<string, string> GetMailSearchCriteria()
         {
             Dictionary<string, string> dictMailSearchCriteria = null;
@@ -61,7 +45,6 @@ namespace DocumentProcessing.Model
                         dictMailSearchCriteria.Add(key, value);
                     }
                 }
-
             }
             catch (Exception ex)
             {

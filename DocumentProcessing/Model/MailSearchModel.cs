@@ -13,27 +13,13 @@ namespace DocumentProcessing.Model
     /// </summary>
     class MailSearchModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public MailSearchModel()
         {
 
         }//MailSearchModel
-
-        public List<MailSearch> GetAllMailSearchDetails()
-        {
-            List<MailSearch> listMailSearch = new List<MailSearch>();
-
-            try
-            {
-
-            }
-            catch (Exception ex)
-            {
-                Log.FileLog(Common.LogType.Error,ex.ToString());
-            }
-
-            return listMailSearch;
-
-        }
 
     }//MailSearchModel
 }//MailSearchModel

@@ -15,10 +15,14 @@ namespace DocumentProcessing.Controller
     /// </summary>
     class MailSearchController
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public string PhraseToSearch { get; set; }
         /// <summary>
         /// 
         /// </summary>
+        public string senderEmail { get; set; }
         public MailSearchController()
         {
 
@@ -44,7 +48,6 @@ namespace DocumentProcessing.Controller
                 //TimeSpan ts = new TimeSpan(0, 0, 0, 0);
                 dictSearchMailCriteria = mailCriteriaController.GetMailSearchCriteria();
 
-
                 ////Date for which the mailbox is to be searched is provided
                 ////To be made configurable from XML file
                 //DateTime date = DateTime.Now.AddDays(-1);
@@ -67,6 +70,7 @@ namespace DocumentProcessing.Controller
                 {
 
                     string mailsearch = PhraseToSearch;
+                    //string fromSender = senderEmail;
                     //Subject filter criteria
                     //A local variable subjectFilter stores the subject filter pattern passed from the database
                     SearchFilter.ContainsSubstring subjectFilter = new SearchFilter.ContainsSubstring(ItemSchema.Subject, mailsearch, ContainmentMode.Substring, ComparisonMode.IgnoreCase);
