@@ -50,11 +50,9 @@ namespace DocumentProcessing.Ocr.DataExtraction
                 //Logic of getting metadata depending on type (document type)
 
                 //Srishti              
-                DocumentAttributeModel attributeModel = new DocumentAttributeModel();
-                //List<DocumentAttributes> attributeList1 = null;
-                List<DocumentAttributes> attributeList = null;
-                //attributeList1 =attributeModel.getAllAttributes();
-                attributeList = attributeModel.getAttributesList("pan");
+                //DocumentAttributeModel attributeModel = new DocumentAttributeModel();           
+                //List<DocumentAttributes> attributeList = null;
+                //attributeList = attributeModel.getAttributesList("pan");
                 //
 
                 List<string> listOfAtttributesToGet = new List<string>();
@@ -92,13 +90,13 @@ namespace DocumentProcessing.Ocr.DataExtraction
                                         if (!file.Name.Contains("PAN"))
                                         {
                                             //Srishti
-                                            attributeList = attributeModel.getAttributesList("pan");
+                                            //attributeList = attributeModel.getAttributesList("pan");
                                             //
                                             listOfAtttributesToGet = new List<string>() { "Name*", "Date of Birth*", "Mother's Name*", "Name of Spouse", "Country Of Birth", "UID",
                                             "Grand Total","Amount","Order ID:","Sold By","Order Date:","VAT/TIN:","Service tax #:","Invoice Date:"
                                         };
                                             //Srishti
-                                                foreach (DocumentAttributes attributes in attributeList)
+                                            //foreach (DocumentAttributes attributes in attributeList)
                                             //
                                                 foreach (var attribute in listOfAtttributesToGet)
                                             {
