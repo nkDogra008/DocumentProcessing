@@ -9,9 +9,9 @@ using System.Threading;
 using Exception = System.Exception;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
-using DocumentProcessing.View;
 using DocumentProcessing.Ocr.DataExtraction;
 using System.IO;
+using System.Configuration;
 
 namespace DocumentProcessing.DocumentProcess
 {
@@ -24,15 +24,25 @@ namespace DocumentProcessing.DocumentProcess
         #endregion Global Variables
 
         #region Testing Purpose
-        private string _sourceFilePath = @"D:\Project\source\";
-        private string _targetFilePath = @"D:\Project\target\";
-        private string _logFilePath = @"D:\Project\Logs\";
-        private string _processedFilePath = @"D:\Project\ProcessedFiles\";
-        private string _errorFilePath = @"D:\Project\ErrorFiles\";
-        private string _outputFilePath = @"D:\Project\output result\";
+        private string _sourceFilePath = string.Empty;      
+        private string _targetFilePath = string.Empty;
+        private string _logFilePath = string.Empty;
+        private string _processedFilePath = string.Empty;
+        private string _errorFilePath = string.Empty;
+        private string _outputFilePath = string.Empty;
 
 
         #endregion Testing Purpose
+
+        public DocumentProcessing()
+        {
+            _sourceFilePath = ConfigurationManager.AppSettings["sourceFilePath"];
+            _targetFilePath = ConfigurationManager.AppSettings["targetFilePath"];
+            _logFilePath = ConfigurationManager.AppSettings["logFilePath"];
+            _processedFilePath = ConfigurationManager.AppSettings["processedFilePath"];
+            _errorFilePath = ConfigurationManager.AppSettings["errorFilePath"];
+            _outputFilePath = ConfigurationManager.AppSettings["outputFilePath"];
+        }
 
         /// <summary>
         /// 
@@ -202,76 +212,101 @@ namespace DocumentProcessing.DocumentProcess
         {
             Excel.Application xlApp;
             Excel.Workbook xlWorkBook;
-            Excel.Worksheet xlWorkSheet;
+            Excel.Worksheet xlWorkSheet = null;
             object misValue = System.Reflection.Missing.Value;
             string filepath = @"D:\Project\output result\OutputResult.xlsx";
             bool ifExists;
 
-            xlApp = new Excel.Application();
-            if (xlApp == null)
+            try
             {
-                Log.FileLog(Common.LogType.Error, "EXCEL could not be started.");
-                return;
-            }
-            ifExists = Directory.Exists(_outputFilePath);
-            if (!ifExists)
-            {
-                //string projectPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
-                //string folderName = Path.Combine(projectPath, _outputFilePath);
-                Directory.CreateDirectory(_outputFilePath);
-            }
-            FileInfo file = new FileInfo(filepath);
-            if (!file.Exists)
-            {
-                xlWorkBook = xlApp.Workbooks.Add(misValue);
-                xlWorkBook.SaveAs(filepath, Excel.XlFileFormat.xlWorkbookDefault, misValue, misValue,
-                                  false, false, Excel.XlSaveAsAccessMode.xlNoChange,
-                                  misValue, misValue, misValue, misValue, misValue);
-            }
-            xlWorkBook = xlApp.Workbooks.Open(filepath, misValue, false);
-            xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets[1];
-            if (xlWorkSheet == null)
-            {
-                Log.FileLog(Common.LogType.Error, "Worksheet could not be created.");
-            }
-
-            xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets.get_Item(1);
-
-            if (dicExtractedData.Count > 0)
-            {
-                int i = 0;
-                int lastRow = xlWorkSheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell, Type.Missing).Row;
-                i = lastRow + 1;
-                // if document is not processed by template
-                int j = 2;
-                foreach (KeyValuePair<string, string> keyValue in dicExtractedData)
+                xlApp = new Excel.Application();
+                if (xlApp == null)
                 {
-                    xlWorkSheet.Cells[i, j] = keyValue.Value;
-                    j++;
+                    Log.FileLog(Common.LogType.Error, "EXCEL could not be started.");
+                    return;
                 }
 
-                //if document type is PAN 
-                //sh.Cells[i, "A"] = 1;
-                //sh.Cells[i, "B"] = "PAN";
-                //sh.Cells[i, "C"] = ocrType.ToString();
-                //sh.Cells[i, "D"] = dicExtractedData["5"];
-                //sh.Cells[i, "E"] = dicExtractedData["7"];
-                //sh.Cells[i, "F"] = dicExtractedData["9"];
-                //sh.Cells[i, "G"] = dicExtractedData["12"];
-                //if (dicExtractedData.ContainsKey("Address"))
-                //    sh.Cells[i, "H"] = "PAN";
+                ifExists = Directory.Exists(_outputFilePath);
+                if (!ifExists)
+                {
+                    
+                    Directory.CreateDirectory(_outputFilePath);
+                }
+                FileInfo file = new FileInfo(filepath);
+                if (!file.Exists)
+                {
+                    xlWorkBook = xlApp.Workbooks.Add();
+                    xlWorkBook.SaveAs(filepath, Excel.XlFileFormat.xlWorkbookDefault, misValue, misValue,
+                                      false, false, Excel.XlSaveAsAccessMode.xlNoChange,
+                                      misValue, misValue, misValue, misValue, misValue);
+                }
+                xlWorkBook = xlApp.Workbooks.Open(filepath, misValue, false);
+                xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets[1];
+                
+                if (dicExtractedData.Count > 0)
+                {
+                    List<string> listSheetName = new List<string>();
+                    foreach (Excel.Worksheet sheet in xlWorkBook.Sheets)
+                    {
+                        listSheetName.Add(sheet.Name.ToLower());
+                    }
 
+
+                    if (!listSheetName.Contains(ocrType.ToString().ToLower()))
+                    {
+                        xlWorkSheet = xlApp.Worksheets.Add();
+                        xlWorkSheet.Name = ocrType.ToString();
+                    }
+                    xlWorkBook.Save();
+                    xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets.get_Item(ocrType.ToString()); 
+                    
+                   
+                    if (ocrType == Common.OcrType.Abbyy)
+                    {
+                        int i = 0;
+                        int lastRow = xlWorkSheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell, Type.Missing).Row;
+                        i = lastRow + 1;
+                        // if document is not processed by template
+                        int j = 2;
+                        foreach (KeyValuePair<string, string> keyValue in dicExtractedData)
+                        {
+                            xlWorkSheet.Cells[i, j] = keyValue.Value;
+                            j++;
+                        }
+
+                    }
+                    else if (ocrType == Common.OcrType.Aspire)
+                    {
+                        int i = 0;
+                        int lastRow = xlWorkSheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell, Type.Missing).Row;
+                        i = lastRow + 1;
+                        // if document is not processed by template
+                        int j = 2;
+                        foreach (KeyValuePair<string, string> keyValue in dicExtractedData)
+                        {
+                            xlWorkSheet.Cells[i, j] = keyValue.Value;
+                            j++;
+                        }
+                    }
+                }
+                foreach (Excel.Worksheet sheet in xlWorkBook.Sheets)
+                {
+                    if (sheet.Name == "Sheet1")
+                        sheet.Delete();
+                }
+                xlWorkBook.Save();
+                xlWorkBook.Close();
+                xlApp.Quit();
+
+                Marshal.ReleaseComObject(xlWorkSheet);
+                Marshal.ReleaseComObject(xlWorkBook);
+                Marshal.ReleaseComObject(xlApp);
+                Marshal.CleanupUnusedObjectsInCurrentContext();
             }
-
-            xlWorkBook.Save();
-            xlWorkBook.Close();
-            xlApp.Quit();
-
-            Marshal.ReleaseComObject(xlWorkSheet);
-            Marshal.ReleaseComObject(xlWorkBook);
-            Marshal.ReleaseComObject(xlApp);
-            Marshal.CleanupUnusedObjectsInCurrentContext();
-
+            catch (Exception ex)
+            {
+                Log.FileLog(Common.LogType.Error, ex.ToString());
+            }
         }//SaveOutputResult
     }//DocumentProcessing
 }//DocumentProcessing

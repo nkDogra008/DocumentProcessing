@@ -244,17 +244,23 @@ namespace DocumentProcessing.Controller
             bool mailExists = false;
             try
             {
-                string condition = null;
+                MailServerDetailController mailServerDetailController = new MailServerDetailController(attachmentPath);
+                MailServerDetail mailServerDetail = mailServerDetailController.GetMailServerDetails;
+                string condition = mailServerDetail.SearchCondition;
                 // outlook.Application app = new outlook.Application();
                 string scope = "Inbox";
                 outlook.NameSpace outlookNamespace = app.GetNamespace("MAPI");
                 outlook.MAPIFolder folderInbox = outlookNamespace.GetDefaultFolder(outlook.OlDefaultFolders.olFolderInbox);
                 scope = "\'" + folderInbox.FolderPath + "\'";
 
-                XmlDocument reader = new XmlDocument();
-                reader.Load(@"D:\Project\SettingFile\Settings.xml");
-                if (!string.IsNullOrEmpty(reader.GetElementsByTagName("searchcondition")[0].InnerText))
-                    condition = reader.GetElementsByTagName("searchcondition")[0].InnerText;
+                ////Creates an instance of XmlDocument
+                //XmlDocument reader = new XmlDocument();
+
+                ////Loads the xml file into the instance
+                //reader.Load(@"D:\Project\SettingFile\Settings.xml");
+
+                //if (!string.IsNullOrEmpty(reader.GetElementsByTagName("searchcondition")[0].InnerText))
+                //    condition = reader.GetElementsByTagName("searchcondition")[0].InnerText;
 
                 DateTime date = DateTime.Today;
 

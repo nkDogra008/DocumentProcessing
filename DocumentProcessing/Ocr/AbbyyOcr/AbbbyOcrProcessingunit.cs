@@ -84,9 +84,9 @@ namespace DocumentProcessing.Ocr.AbbyyOcr
 
 
                 // Name of application you created
-                restClient.ApplicationId = "DocumentProcessingV1";
+                restClient.ApplicationId = "DocumentProcessingV2";
                 // Password should be sent to your e-mail after application was created
-                restClient.Password = "YBCaIgrTFg+t9DlgouIhLCWc";
+                restClient.Password = "OnbrXnz5Gf4aUihgEOopSrY8";
 
 
                 // Display hint to provide credentials

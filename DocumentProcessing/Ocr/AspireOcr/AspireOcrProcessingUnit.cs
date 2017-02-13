@@ -52,9 +52,9 @@ namespace DocumentProcessing.Ocr.AspireOcr
         public string StartProcess()
         {
             string extractedData = string.Empty;
+
             AspriseOCR.SetUp();
             AspriseOCR aspireOcr = new AspriseOCR();
-
             try
             {
                 DirectoryInfo dirInfoUnProcessedFiles = new DirectoryInfo(_fileSourcePath);
@@ -62,8 +62,8 @@ namespace DocumentProcessing.Ocr.AspireOcr
                 aspireOcr.StartEngine(AspriseOCR.LANGUAGE_ENG, AspriseOCR.SPEED_SLOW);
                 foreach (FileInfo file in filesInDirectory)
                 {
-
-                    string fileName = file.Name.Split('.')[0];
+                  
+                    string fileName = file.Name;
                     extractedData = aspireOcr.Recognize(file.FullName, -1, -1, -1, -1, -1, AspriseOCR.RECOGNIZE_TYPE_ALL, AspriseOCR.OUTPUT_FORMAT_PLAINTEXT);
                     if (null != extractedData && extractedData.Trim().Length > 0)
                     {

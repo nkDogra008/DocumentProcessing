@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Threading;
+using System.Configuration;
 
 namespace DocumentProcessing.Controller
 {
@@ -26,18 +27,10 @@ namespace DocumentProcessing.Controller
         private string _saveAttachmentPath = string.Empty;
         private string _serverType = string.Empty;
         private string _phraseToSearch = string.Empty;
-        Dictionary<string, string> dictGetMetadataDetails = null;
+        private string _settingsFile = string.Empty;
         private string type;
         private string format;
 
-
-        /// <summary>
-        /// Default Constructor
-        /// </summary>
-        //public MailServerDetailController()
-        //{
-
-        //}//MailServerDetailController
 
         /// <summary>
         /// This method controls the mail server details
@@ -45,7 +38,7 @@ namespace DocumentProcessing.Controller
         /// <param name="filePathToSaveAttachments">Path to save the attachment is passed as parameter</param>
         public MailServerDetailController(string filePathToSaveAttachments)
         {
-
+            _settingsFile = ConfigurationManager.AppSettings["settingsFilePath"];
             //Contructor will load all the details from XML file
             // Path of XML to be specified
             bool exists = System.IO.Directory.Exists(filePathToSaveAttachments);
@@ -71,13 +64,14 @@ namespace DocumentProcessing.Controller
                 XmlDocument reader = new XmlDocument();
 
                 //Loads the xml file into the instance
-                reader.Load(@"D:\Project\SettingFile\Settings.xml");
+                reader.Load(_settingsFile);
 
                 //Initializes all the required variables to Empty
                 string username = string.Empty;
                 string password = string.Empty;
                 string domain = string.Empty;
                 string mailbox = string.Empty;
+                string condition = string.Empty;
 
                 //Checks for username from excel file node and saves into string
                 if (!string.IsNullOrEmpty(reader.GetElementsByTagName("username")[0].InnerText))
@@ -111,6 +105,7 @@ namespace DocumentProcessing.Controller
                 mailServerDetail.Password = password;
                 mailServerDetail.MailboxServer = mailbox;
                 mailServerDetail.Domain = domain;
+                mailServerDetail.SearchCondition = _mailSearchCondition;
                 GetMailServerDetails = mailServerDetail;
 
 
@@ -154,7 +149,6 @@ namespace DocumentProcessing.Controller
         private void GetAttachmentsFromExchangeServer()
         {
             MailSearchController mailSearchController = new MailSearchController();
-            //mailSearchController.PhraseToSearch = _phraseToSearch;
             //Creates an instance of ExchangeService
             ExchangeService exchangeService = new ExchangeService(ExchangeVersion.Exchange2010_SP1);
             try
@@ -236,18 +230,17 @@ namespace DocumentProcessing.Controller
             try
             {
                 MailSearchController mailSearchController = new MailSearchController();
-                //mailSearchController.PhraseToSearch = _phraseToSearch;
 
                 //Uses the GetApplicationObject method to login into Outlook
-                GetApplicationObject();
-                
+                 //GetApplicationObject();
+
                 //await Task.Delay(3000);
+
                 var application = GetApplicationObject().Application;
                 //Gets the root folder of Outlook
                 Outlook.Folder selectedFolder = application.Session.DefaultStore.GetRootFolder() as Outlook.Folder;
 
                 mailSearchController.OutlookMailSearch(application, _saveAttachmentPath);
-
 
                 //Closes the Outlook
                 Marshal.ReleaseComObject(application);
@@ -278,15 +271,13 @@ namespace DocumentProcessing.Controller
                 }
                 else
                 {
-                    Process.Start("OUTLOOK.EXE");
-                    Thread.Sleep(4000);
                     // If not, create a new instance of Outlook and log on to the default profile
-                    //application = new Outlook.Application();
-                    ////Gets the MAPI namespace
-                    //Outlook.NameSpace nameSpace = application.GetNamespace("MAPI");
-                    ////Login into the outlook
-                    //nameSpace.Logon(GetMailServerDetails.Username, GetMailServerDetails.Password, Missing.Value, Missing.Value);
-                    //nameSpace = null;
+                    application = new Outlook.Application();
+                    //Gets the MAPI namespace
+                    Outlook.NameSpace nameSpace = application.GetNamespace("MAPI");
+                    //Login into the outlook
+                    nameSpace.Logon(string.Empty, string.Empty, Missing.Value, Missing.Value);
+                    nameSpace = null;
                 }
 
             }
