@@ -1,7 +1,6 @@
 ﻿using DocumentProcessing.Controller;
 using DocumentProcessing.Ocr.AbbyyOcr;
 using DocumentProcessing.Ocr.AspireOcr;
-using DocumentProcessing.Ocr.DataExtraction;
 using DocumentProcessing.Utility;
 using System;
 using System.Collections.Generic;
@@ -10,6 +9,8 @@ using System.Threading;
 using Exception = System.Exception;
 using Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
+using DocumentProcessing.View;
+using DocumentProcessing.Ocr.DataExtraction;
 
 namespace DocumentProcessing.DocumentProcess
 {
@@ -38,12 +39,14 @@ namespace DocumentProcessing.DocumentProcess
         {
             // Setting log path for testing purpose
             Log.LogFilePath = _logFilePath;
+            int AttributeId;
             try
             {
                 // Saswat Code Test purpose
                 MailServerDetailController mailServerDetailController = new MailServerDetailController(_sourceFilePath);
                 mailServerDetailController.DownloadAttachments();
 
+                AttributeId = 1;
 
                 // Add logic for downloading mails from mailserver
                 // How to identify the type of document(It is PAN, INVOICE ,KYC or PASSPORT)
@@ -65,7 +68,7 @@ namespace DocumentProcessing.DocumentProcess
                     {
                         //Logic for performance storing 
                         // Logic for extraction 
-                        var result = ExtractDataFromFile(Common.OcrType.Abbyy);
+                        var result = ExtractDataFromFile(Common.OcrType.Abbyy,AttributeId);
                         foreach (Dictionary<string, string> dicResult in result)
                         {
                             if (dicResult.Count > 0)
@@ -80,7 +83,7 @@ namespace DocumentProcessing.DocumentProcess
                     if (!(aspireOcrProcess.IsAlive || isAspireProcessCompleted))
                     {
                         // Logic for extraction 
-                        var result = ExtractDataFromFile(Common.OcrType.Aspire);
+                        var result = ExtractDataFromFile(Common.OcrType.Aspire,AttributeId);
                         foreach (Dictionary<string, string> dicResult in result)
                         {
                             if (dicResult.Count > 0)
@@ -170,13 +173,16 @@ namespace DocumentProcessing.DocumentProcess
         /// </summary>
         /// <param name="ocrType"></param>
         /// <returns></returns>
-        private List<Dictionary<string, string>> ExtractDataFromFile(Common.OcrType ocrType)
+        private List<Dictionary<string, string>> ExtractDataFromFile(Common.OcrType ocrType,int AttributeId)
         {
+            //For testing purpose
+            AttributeId = 1;
+            //For testing purpose
             List<Dictionary<string, string>> listDictExtractedData = null;
             ExtractData extractData = new ExtractData(_targetFilePath, _errorFilePath, _processedFilePath);
             try
             {
-                listDictExtractedData = extractData.GetData(ocrType);
+                listDictExtractedData = extractData.GetData(ocrType, AttributeId);
             }
             catch (Exception ex)
             {

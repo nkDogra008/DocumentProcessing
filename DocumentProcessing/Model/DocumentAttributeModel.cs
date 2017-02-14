@@ -24,30 +24,31 @@ namespace DocumentProcessing.Model
         }//DocumentAttributeModel
 
         /// <summary>
-        /// This method gets all required Attributes based upon document type(eg invoice,Passport etc)
+        /// This method gets all required Attributes based upon Attribute Id
         /// </summary>
-        /// <param name="documentType"></param>Type of the document(eg:Invoice,Aadhar etc)
+        /// <param name="AttributeId"></param>Represents type Id of document(eg Invoice,passport etc)
         /// <returns></returns>
-        public List<DocumentAttributes> getAttributesList(string documentType)
+        public List<DocumentAttributes> GetAttributesById(int AttributeId)
         {
             List<DocumentAttributes> listAttributes = new List<DocumentAttributes>();
             DocumentAttributes attributes;
             IDataReader reader;
 
-            string spName = "sp_getAttributesList";
+            string spName = "sp_getAttributesById";
             DbCommand dbCommand = _dbConnection.GetStoredProcCommand(spName);
-            _dbConnection.AddInParameter(dbCommand, "Name", DbType.String, documentType);
+            _dbConnection.AddInParameter(dbCommand, "AttributeId", DbType.Int32, AttributeId);
             using (reader = _dbConnection.ExecuteReader(dbCommand))
             {
                 while (reader.Read())
                 {
                     attributes = new DocumentAttributes();
+                    attributes.A_Id = reader.GetInt32(reader.GetOrdinal("AId"));
                     attributes.AttributeName = reader.GetString(reader.GetOrdinal("AttributeName"));
                     listAttributes.Add(attributes);
                 }
             }
             return listAttributes;
-        }//getAttributesList(string metadataName)
+        }//GetAttributesById
 
         /// <summary>
         /// This method gets all attributes

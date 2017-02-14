@@ -31,12 +31,12 @@ namespace DocumentProcessing.View
         /// <summary>
         /// 
         /// </summary>
-        public int DocId { get; set; }
+        public int DocTypeId { get; set; }
 
         /// <summary>
         /// Gets Attribute Id of specific attribute
         /// </summary>
-        public int AttributeId { get; set; }
+        public int A_Id { get; set; }
 
         /// <summary>
         /// To get and set specific row in text file

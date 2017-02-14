@@ -27,10 +27,9 @@ namespace DocumentProcessing.Model
         /// <summary>
         /// GetDocTemplateByType
         /// </summary>
-        /// <param name="docType"></param>
         /// <param name="ocrType"></param>
         /// <returns></returns>
-        public List<DocumentTemplate> GetDocTemplateByType(int docType, Common.OcrType ocrType)
+        public List<DocumentTemplate> GetDocTemplateByType(Common.OcrType ocrType)
         {
             List<DocumentTemplate> listDocTemplate = null;
             IDataReader reader;
@@ -39,15 +38,16 @@ namespace DocumentProcessing.Model
             {
                 string spName = "sp_getDocTemplateDetails";
                 DbCommand dbCommand = _dbConnection.GetStoredProcCommand(spName);
-                _dbConnection.AddInParameter(dbCommand, "OcrID", DbType.String, ocrType);
+                _dbConnection.AddInParameter(dbCommand, "OcrId", DbType.String, ocrType);
                 using (reader = _dbConnection.ExecuteReader(dbCommand))
                 {
                     while (reader.Read())
                     {
                         doctemplate = new DocumentTemplate();
-                        doctemplate.DocTemplateId = reader.GetInt32(reader.GetOrdinal("ID"));
-                        doctemplate.OcrTypeId = (Common.OcrType)reader.GetInt32(reader.GetOrdinal("OcrID"));
-                        doctemplate.AttributeId = reader.GetInt32(reader.GetOrdinal("AttributeID"));
+                        doctemplate.DocTemplateId = reader.GetInt32(reader.GetOrdinal("Id"));
+                        doctemplate.OcrTypeId = (Common.OcrType)reader.GetInt32(reader.GetOrdinal("OcrId"));
+                        doctemplate.DocTypeId = reader.GetInt32(reader.GetOrdinal("MetadataTypeId"));
+                        doctemplate.A_Id = reader.GetInt32(reader.GetOrdinal("AId"));
                         doctemplate.LineNo = reader.GetInt32(reader.GetOrdinal("LineNumber"));
                         listDocTemplate.Add(doctemplate);
                     }

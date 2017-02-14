@@ -8,23 +8,22 @@ using DocumentProcessing;
 using DocumentProcessing.Utility;
 using DocumentProcessing.View;
 using System.Threading;
-using DocumentProcessing.Model;
-using System.Collections.Generic;
-
+using DocumentProcessing.Controller;
 
 namespace DocumentProcessing.Ocr.DataExtraction
 {
-
     public class ExtractData
     {
         private string _fileLocation;
         private string _pathErrorFilesFolder;
         private string _pathProcessedFilesFolder;
         private Common.OcrType _typeOfOcr;
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="filePath"></param>
+       /// <summary>
+       /// 
+       /// </summary>
+       /// <param name="pathToExtractFrom"></param>
+       /// <param name="pathErrorfilesFolder"></param>
+       /// <param name="pathProcessedfilesFolder"></param>
         public ExtractData(string pathToExtractFrom, string pathErrorfilesFolder, string pathProcessedfilesFolder)
         {
             _fileLocation = pathToExtractFrom;
@@ -36,25 +35,21 @@ namespace DocumentProcessing.Ocr.DataExtraction
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="documentType"></param>
         /// <param name="ocrType"></param>
+        /// <param name="AttributeId"></param>
         /// <returns></returns>
-        public List<Dictionary<string, string>> GetData(Common.OcrType ocrType)
+        public List<Dictionary<string, string>> GetData(Common.OcrType ocrType, int AttributeId)
         {
             List<Dictionary<string, string>> returnedData = new List<Dictionary<string, string>>();
             Dictionary<string, string> dicExtractedData = new Dictionary<string, string>();
             Dictionary<string, string> dicExtractedTemplateData = new Dictionary<string, string>();
+            DocumentAttributeController attributeController = null;
+            List<DocumentAttributes> attributeList = null;      
             _typeOfOcr = ocrType;
             try
             {
-                //Logic of getting metadata depending on type (document type)
-
-                //Srishti              
-                //DocumentAttributeModel attributeModel = new DocumentAttributeModel();           
-                //List<DocumentAttributes> attributeList = null;
-                //attributeList = attributeModel.getAttributesList("pan");
-                //
-
+                //Logic of getting required attributes depending on type (document type)          
+                attributeController = new DocumentAttributeController();              
                 List<string> listOfAtttributesToGet = new List<string>();
 
                 DirectoryInfo dirInfo = new DirectoryInfo(_fileLocation);
@@ -88,18 +83,16 @@ namespace DocumentProcessing.Ocr.DataExtraction
                                         // If the document type have Legends present in it.
                                         // Example there is attribute present on document
                                         if (!file.Name.Contains("PAN"))
-                                        {
-                                            //Srishti
-                                            //attributeList = attributeModel.getAttributesList("pan");
-                                            //
+                                        {                         
+                                            attributeList = attributeController.GetAttributesById(AttributeId);
+                                            /*
                                             listOfAtttributesToGet = new List<string>() { "Name*", "Date of Birth*", "Mother's Name*", "Name of Spouse", "Country Of Birth", "UID",
-                                            "Grand Total","Amount","Order ID:","Sold By","Order Date:","VAT/TIN:","Service tax #:","Invoice Date:"
-                                        };
-                                            //Srishti
-                                            //foreach (DocumentAttributes attributes in attributeList)
-                                            //
-                                                foreach (var attribute in listOfAtttributesToGet)
+                                            "Grand Total","Amount","Order ID:","Sold By","Order Date:","VAT/TIN:","Service tax #:","Invoice Date:"*/
+                                        }
+                                            
+                                                foreach (DocumentAttributes docAttribute in attributeList)
                                             {
+                                                var attribute = docAttribute.AttributeName;
                                                 if (eachLineInFile.Contains(attribute))
                                                 {
                                                     eachLineInFile = eachLineInFile.Replace(attribute, string.Empty).Trim();
@@ -117,43 +110,44 @@ namespace DocumentProcessing.Ocr.DataExtraction
                                         }
                                         else
                                         {
-                                            #region Testing Purpose
+                                        #region Testing Purpose
+                                        DocumentTemplateController docTemplateController = new DocumentTemplateController();
+                                        List<DocumentTemplate> listDocumentTemplate=docTemplateController.GetDocTemplateByType(_typeOfOcr);                                  
+                                        /*  if (ocrType == Common.OcrType.Abbyy)
+                                         {
+                                             DocumentTemplate docTemp1 = new DocumentTemplate() { AttributeId = 1, DocId = 1, DocTemplateId = 1, LineNo = 5, OcrTypeId = Common.OcrType.Abbyy };
+                                             listDocumentTemplate.Add(docTemp1);
+                                             docTemp1 = new DocumentTemplate() { AttributeId = 2, DocId = 1, DocTemplateId = 2, LineNo = 7, OcrTypeId = Common.OcrType.Abbyy };
+                                             listDocumentTemplate.Add(docTemp1);
+                                             docTemp1 = new DocumentTemplate() { AttributeId = 3, DocId = 1, DocTemplateId = 3, LineNo = 9, OcrTypeId = Common.OcrType.Abbyy };
+                                             listDocumentTemplate.Add(docTemp1);
+                                             docTemp1 = new DocumentTemplate() { AttributeId = 4, DocId = 1, DocTemplateId = 4, LineNo = 12, OcrTypeId = Common.OcrType.Abbyy };
+                                             listDocumentTemplate.Add(docTemp1);
+                                         }
+                                         if (ocrType == Common.OcrType.Aspire)
+                                         {
+                                             DocumentTemplate docTemp1 = new DocumentTemplate() { AttributeId = 1, DocId = 1, DocTemplateId = 1, LineNo = 4, OcrTypeId = Common.OcrType.Aspire };
+                                             listDocumentTemplate.Add(docTemp1);
+                                             docTemp1 = new DocumentTemplate() { AttributeId = 2, DocId = 1, DocTemplateId = 2, LineNo = 5, OcrTypeId = Common.OcrType.Aspire };
+                                             listDocumentTemplate.Add(docTemp1);
+                                             docTemp1 = new DocumentTemplate() { AttributeId = 3, DocId = 1, DocTemplateId = 3, LineNo = 6, OcrTypeId = Common.OcrType.Aspire };
+                                             listDocumentTemplate.Add(docTemp1);
+                                             docTemp1 = new DocumentTemplate() { AttributeId = 4, DocId = 1, DocTemplateId = 4, LineNo = 8, OcrTypeId = Common.OcrType.Aspire };
+                                             listDocumentTemplate.Add(docTemp1);
+                                         }
+                                         */
 
-                                            List<DocumentTemplate> listDocumentTemplate = new List<DocumentTemplate>();
-                                            if (ocrType == Common.OcrType.Abbyy)
-                                            {
-                                                DocumentTemplate docTemp1 = new DocumentTemplate() { AttributeId = 1, DocId = 1, DocTemplateId = 1, LineNo = 5, OcrTypeId = Common.OcrType.Abbyy };
-                                                listDocumentTemplate.Add(docTemp1);
-                                                docTemp1 = new DocumentTemplate() { AttributeId = 2, DocId = 1, DocTemplateId = 2, LineNo = 7, OcrTypeId = Common.OcrType.Abbyy };
-                                                listDocumentTemplate.Add(docTemp1);
-                                                docTemp1 = new DocumentTemplate() { AttributeId = 3, DocId = 1, DocTemplateId = 3, LineNo = 9, OcrTypeId = Common.OcrType.Abbyy };
-                                                listDocumentTemplate.Add(docTemp1);
-                                                docTemp1 = new DocumentTemplate() { AttributeId = 4, DocId = 1, DocTemplateId = 4, LineNo = 12, OcrTypeId = Common.OcrType.Abbyy };
-                                                listDocumentTemplate.Add(docTemp1);
-                                            }
-                                            if (ocrType == Common.OcrType.Aspire)
-                                            {
-                                                DocumentTemplate docTemp1 = new DocumentTemplate() { AttributeId = 1, DocId = 1, DocTemplateId = 1, LineNo = 4, OcrTypeId = Common.OcrType.Aspire };
-                                                listDocumentTemplate.Add(docTemp1);
-                                                docTemp1 = new DocumentTemplate() { AttributeId = 2, DocId = 1, DocTemplateId = 2, LineNo = 5, OcrTypeId = Common.OcrType.Aspire };
-                                                listDocumentTemplate.Add(docTemp1);
-                                                docTemp1 = new DocumentTemplate() { AttributeId = 3, DocId = 1, DocTemplateId = 3, LineNo = 6, OcrTypeId = Common.OcrType.Aspire };
-                                                listDocumentTemplate.Add(docTemp1);
-                                                docTemp1 = new DocumentTemplate() { AttributeId = 4, DocId = 1, DocTemplateId = 4, LineNo = 8, OcrTypeId = Common.OcrType.Aspire };
-                                                listDocumentTemplate.Add(docTemp1);
-                                            }
 
+                                        //foreach (DocumentTemplate docTemplate in listDocumentTemplate)
+                                        //{
+                                        //    // Get attribute name depending using attribute id
 
-                                            //foreach (DocumentTemplate docTemplate in listDocumentTemplate)
-                                            //{
-                                            //    // Get attribute name depending using attribute id
+                                        //}
 
-                                            //}
-
-                                            #endregion Testing Purpose
-                                            // above logic should be out of loop
-                                            // Extracts data depending upon document template
-                                            ExtractDataUsingDocTemplate(dicExtractedTemplateData, lineNo, eachLineInFile, listDocumentTemplate);
+                                        #endregion Testing Purpose
+                                        // above logic should be out of loop
+                                        // Extracts data depending upon document template
+                                        ExtractDataUsingDocTemplate(dicExtractedTemplateData, lineNo, eachLineInFile, listDocumentTemplate);
                                         }
                                     }
                                     // counter increments for fetching correct line
@@ -176,9 +170,7 @@ namespace DocumentProcessing.Ocr.DataExtraction
                             returnedData.Add(dicExtractedTemplateData);
                     }
 
-
-
-                }
+                
 
             }
             catch (Exception ex)
@@ -202,7 +194,7 @@ namespace DocumentProcessing.Ocr.DataExtraction
         {
             try
             {
-                //Depends on type of ocr
+                // Depends on type of ocr
                 // Get list document templates details and extract data from the document depends on docType and ocr type
                 // Implementing example of Pan card
                 DocumentTemplate docTemp = new DocumentTemplate();

@@ -23,19 +23,19 @@ namespace DocumentProcessing.Controller
         }//DocumentAttributeController
 
         /// <summary>
-        /// This method gets the required attributes depending upon document type(eg:Invoice,Aadhar etc)
+        /// This method gets the required attributes depending upon Attribute Id
         /// </summary>
-        /// <param name="documentType"></param>Type of the document(eg:Invoice,Aadhar etc)
+        /// <param name="AttributeId"></param>Represents the Id for each document type(eg: Invoice,Aadhaar etc)
         /// <returns></returns>
-        public List<DocumentAttributes> getAttributesList(string documentType)
+        public List<DocumentAttributes> GetAttributesById(int AttributeId)
         {
             List<DocumentAttributes> documentAttributes = null;
             try
             {
-                if (documentType != null)
+                if (AttributeId != 0)
                 {
                     DocumentAttributeModel attributeModel = new DocumentAttributeModel();
-                    documentAttributes = attributeModel.getAttributesList(documentType);
+                    documentAttributes = attributeModel.GetAttributesById(AttributeId);
                 }
             }
             catch (Exception ex)
@@ -43,7 +43,7 @@ namespace DocumentProcessing.Controller
                 Log.FileLog(Common.LogType.Error, ex.ToString());
             }
             return documentAttributes;
-        }//getAttributesList
+        }//GetAttributesById
 
         /// <summary>
         /// This method gets all Attributes

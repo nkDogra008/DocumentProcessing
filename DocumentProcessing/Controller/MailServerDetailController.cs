@@ -51,7 +51,7 @@ namespace DocumentProcessing.Controller
                 XmlDocument reader = new XmlDocument();
 
                 //Loads the xml file into the instance
-                reader.Load(@"D:\Project\SettingFile\Settings.xml");
+                reader.Load("settings.xml");
 
                 //Initializes all the required variables to Empty
                 string username = string.Empty;
@@ -115,8 +115,12 @@ namespace DocumentProcessing.Controller
                 //From Exchange server  (EWS)
                 if (_serverType == Common.ServerType.ExchangeServer.ToString())
                     GetAttachmentsFromExchangeServer();
-                else if (_serverType == Common.ServerType.Outlook.ToString()) { }
+                else if (_serverType == Common.ServerType.Outlook.ToString())
+                {
+                    GetAttachmentsFromOutlook();
+                }
                 // From Outlook (Using outlook Interop)
+
 
             }
             catch (Exception ex)
@@ -126,7 +130,7 @@ namespace DocumentProcessing.Controller
 
 
         }
-       
+
         /// <summary>
         /// Method to get attachment from exchange server
         /// </summary>
@@ -149,38 +153,43 @@ namespace DocumentProcessing.Controller
                 //Class Mail search criteria is called and the returned value is stored in a variable
                 FindItemsResults<Item> findResults = mailSearchController.MailSearchCriteria(_mailSearchCondition, exchangeService);
 
+
+                Metadata metadata = new Metadata();
+                string[] format = metadata.Format.Split(',');
                 //Loops for all mails in the variable 
-                Metadata m = new Metadata();
-                string[] s = m.Format.Split(',');
                 foreach (Item item in findResults)
                 {
 
-                    EmailMessage msg = EmailMessage.Bind(exchangeService, item.Id);
+                    EmailMessage message = EmailMessage.Bind(exchangeService, item.Id);
 
                     //Checks for attachment in the email
-                    if (msg.HasAttachments)
+                    if (message.HasAttachments)
                     {
                         //Attachments are stored in a collection
-                        AttachmentCollection attachmentCollection = msg.Attachments;
+                        AttachmentCollection attachmentCollection = message.Attachments;
 
                         //Loops for each attachment in the collection
                         foreach (Attachment attachment in attachmentCollection)
                         {
-                            //The extensions extracted from the attachment name and stored in a variable 
-                            var extension = attachment.Name.Split('.')[1];
-
-                            //Checks the extension type
-                            // Check dynamically
-                            if (extension == s[0] || extension == s[1] || extension == s[2] || 
-                                extension == s[3] || extension == s[4] || extension == s[5])
+                            string fileName = attachment.Name;
+                            if (fileName.Contains("Invoice"))
                             {
-                                //Stores the attachment in a variable
-                                FileAttachment fileAttachment = attachment as FileAttachment;
-                                if (_saveAttachmentPath != string.Empty)
-                                    //Attachment is saved in filepath
-                                    fileAttachment.Load(_saveAttachmentPath + attachment.Name);
-                                else
-                                    Log.FileLog(Common.LogType.ApplicationError, "Attachment download path not set");
+                                //The extensions extracted from the attachment name and stored in a variable 
+                                var extension = attachment.Name.Split('.')[1];
+
+                                //Checks the extension type
+                                // Check dynamically
+                                if (extension == format[0] || extension == format[1] || extension == format[2] ||
+                                    extension == format[3] || extension == format[4] || extension == format[5])
+                                {
+                                    //Stores the attachment in a variable
+                                    FileAttachment fileAttachment = attachment as FileAttachment;
+                                    if (_saveAttachmentPath != string.Empty)
+                                        //Attachment is saved in filepath
+                                        fileAttachment.Load(_saveAttachmentPath + attachment.Name);
+                                    else
+                                        Log.FileLog(Common.LogType.ApplicationError, "Attachment download path not set");
+                                }
                             }
 
                         }
@@ -202,6 +211,8 @@ namespace DocumentProcessing.Controller
         {
             try
             {
+                MailSearchController mailSearchController = new MailSearchController();
+                mailSearchController.PhraseToSearch = _phraseToSearch;
 
                 //Uses the GetApplicationObject method to login into Outlook
                 GetApplicationObject();
@@ -212,14 +223,12 @@ namespace DocumentProcessing.Controller
                 //Gets the root folder of Outlook
                 Outlook.Folder selectedFolder = application.Session.DefaultStore.GetRootFolder() as Outlook.Folder;
 
-                //Class to Look for Inbox folder in mailbox root folder
-                EnumerateFolders(selectedFolder);
 
-                //Class to iterate through each message
-                IterateMessages(selectedFolder);
+                mailSearchController.OutlookMailSearch(_phraseToSearch, application);
+                
 
-                //Closes the Outlook
-                Marshal.ReleaseComObject(application);
+                 //Closes the Outlook
+                 Marshal.ReleaseComObject(application);
             }
             catch (Exception ex)
             {
@@ -269,93 +278,6 @@ namespace DocumentProcessing.Controller
             return application;
         }//GetAttachmentsFromOutlook
 
-
-        /// <summary>
-        /// This class looks into the root folder for Inbox
-        /// </summary>
-        /// <param name="folder">Root folder is passed</param>
-        private void EnumerateFolders(Outlook.Folder folder)
-        {
-            try
-            {
-                Outlook.Folders childFolders = folder.Folders;
-
-                if (childFolders.Count > 0)
-                {
-                    // loop through each childFolder (aka sub-folder) in current folder
-                    foreach (Outlook.Folder childFolder in childFolders)
-                    {
-                        // We only want Inbox folders - ignore Contacts and others
-                        if (childFolder.FolderPath.Contains("Inbox"))
-                        {
-                            // Call EnumerateFolders using childFolder, to see if there are any sub-folders within this one
-                            EnumerateFolders(childFolder);
-                        }
-                    }
-                }
-                // pass folder to IterateMessages which processes individual email messages
-                IterateMessages(folder);
-            }
-            catch (Exception ex)
-            {
-                //file log method call
-                Log.FileLog(Common.LogType.Error, ex.ToString());
-            }
-        }//EnumerateFolders
-
-        /// <summary>
-        /// This class contains code to iterate through each message and download the attachment
-        /// </summary>
-        /// <param name="folder">Inbox is passed</param>
-        private void IterateMessages(Outlook.Folder folder)
-        {
-            Metadata m = new Metadata();
-            string[] s = m.Format.Split(',');
-            try
-            {
-                //string mailsearch = "saswat";
-                //outlook.Search searchResult = OutlookMailSearch(, "saswat");
-                //The items of the passed folder are stored in a variable
-                var fi = folder.Items;
-
-                //Attachment extensions to save are stored in an array
-            //    string[] extensionsArray = { ".jpg", ".jpeg", ".pdf", ".png", ".PNG", ".txt" };
-
-                //This block contains the code to download the attachments
-                //Checks condition for folder items to be null
-                if (fi != null)
-                {
-                    //Loops through each element(mail) in the folder
-                    foreach (object item in fi)
-                    {
-                        //emails are stored in a variable
-                        Outlook.MailItem mi = (Outlook.MailItem)item;
-
-                        //Attachments are stored in a variable
-                        var attachments = mi.Attachments;
-
-                        //Checks whether attachment count is not zero
-                        if (attachments.Count != 0)
-                        {
-                            //Loops through each attachment of the mail
-                            for (int i = 1; i < attachments.Count; i++)
-                            {
-                                //Checks for the extension in the attachments
-                                if (s.Any(attachments[i].FileName.Contains))
-                                {
-                                    //Saves the attachment into the filepath
-                                    attachments[i].SaveAsFile(_saveAttachmentPath + attachments[i].FileName);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.FileLog(Common.LogType.Error, ex.ToString());
-            }
-        }//IterateMessages
 
     }//MailServerDetailController
 }

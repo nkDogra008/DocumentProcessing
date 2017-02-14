@@ -19,18 +19,17 @@ namespace DocumentProcessing.Controller
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="docType"></param>
         /// <param name="ocrType"></param>
         /// <returns></returns>
-        public List<DocumentTemplate> GetDocTemplateByType(int docType, Common.OcrType ocrType)
+        public List<DocumentTemplate> GetDocTemplateByType(Common.OcrType ocrType)
         {
             List<DocumentTemplate> test = null;
             try
             {
-                if (docType > 0 && ocrType > 0)
-                {
+                if (ocrType > 0)
+                { 
                     DocumentTemplateModel documentTemlateModel = new DocumentTemplateModel();
-                    documentTemlateModel.GetDocTemplateByType(docType, ocrType);
+                    documentTemlateModel.GetDocTemplateByType(ocrType);
                 }
             }
             catch (Exception ex)
