@@ -24,6 +24,35 @@ namespace DocumentProcessing.Model
         }//MetadataModel
 
         /// <summary>
+        /// This method returns all rows from Metadata table
+        /// </summary>
+        /// <param name="MetadataTypeId"></param>
+        /// <returns></returns>
+        public List<Metadata> GetAllMetadataDetails()
+        {
+            List<Metadata> listMetadata = new List<Metadata>();
+            Metadata metadata;
+            IDataReader reader;
+
+            string spName = "sp_getAllMetadataDetails";
+            DbCommand dbCommand = _dbConnection.GetStoredProcCommand(spName);
+            using (reader = _dbConnection.ExecuteReader(dbCommand))
+            {
+                while (reader.Read())
+                {
+                    metadata = new Metadata();
+                    metadata.MetadataId = reader.GetInt32(reader.GetOrdinal("MetadataId"));
+                    metadata.Type = reader.GetString(reader.GetOrdinal("Type"));
+                    metadata.Format = reader.GetString(reader.GetOrdinal("Format"));
+                    metadata.MetadataTypeId = reader.GetInt32(reader.GetOrdinal("MetadataTypeId"));
+                    metadata.AttributeId=reader.GetInt32(reader.GetOrdinal("AttributeId"));
+                    listMetadata.Add(metadata);
+                }
+            }
+            return listMetadata;
+        }//GetAllMetadataDetails
+
+        /// <summary>
         /// This method returns rows from Metadata table filtered by MetadataTypeId
         /// </summary>
         /// <param name="MetadataTypeId"></param>Unique Id for each Document Type(eg Invoice,Aadhaar etc)

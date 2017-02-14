@@ -70,7 +70,7 @@ namespace DocumentProcessing.Controller
                 {
 
                     string mailsearch = PhraseToSearch;
-                    //string fromSender = senderEmail;
+                   
                     //Subject filter criteria
                     //A local variable subjectFilter stores the subject filter pattern passed from the database
                     SearchFilter.ContainsSubstring subjectFilter = new SearchFilter.ContainsSubstring(ItemSchema.Subject, mailsearch, ContainmentMode.Substring, ComparisonMode.IgnoreCase);
@@ -135,24 +135,7 @@ namespace DocumentProcessing.Controller
         }
             
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public List<MailSearch> GetAllMailSearchDetails()
-        {
-            List<MailSearch> listMailSearch = new List<MailSearch>();
-            try
-            {
-                MailSearchModel mailSearchModel = new MailSearchModel();
-                listMailSearch = mailSearchModel.GetAllMailSearchDetails();
-            }
-            catch (Exception ex)
-            {
-            }
-            return listMailSearch;
-        }
-
+        
 
     }//MailSearchController
 }

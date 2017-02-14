@@ -51,14 +51,9 @@ namespace DocumentProcessing.Utility
         }//OcrTypes
 
         /// <summary>
-        /// Gets and sets attribute name 
+        /// Gets and sets Unique Id depending upon the type of document(eg. Invoice,Passport etc)
         /// </summary>
-        public string AttributeName { get; set; }
-
-        /// <summary>
-        /// Gets and sets Metadata name
-        /// </summary>
-        public string Name { get; set; }
+        public int AttributeId { get; set; }
 
     }//Common
 }

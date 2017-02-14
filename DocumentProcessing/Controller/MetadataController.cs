@@ -23,6 +23,26 @@ namespace DocumentProcessing.Controller
         }//MetadataController
 
         /// <summary>
+        /// This method returns all rows from Metadata table
+        /// </summary>
+        /// <returns></returns>
+        public List<Metadata> GetAllMetadataDetails()
+        {
+            List<Metadata> listMetadata = null;
+            try
+            {             
+                    MetadataModel metadataModel = new MetadataModel();
+                    listMetadata = metadataModel.GetAllMetadataDetails();               
+            }
+            catch (Exception ex)
+            {
+                Log.FileLog(Common.LogType.Error, ex.ToString());
+            }
+            return listMetadata;
+        }//GetAllMetadataDetails
+
+
+        /// <summary>
         /// This method returns rows from Metadata table filtered by MetadataTypeId
         /// </summary>
         /// <param name="MetadataTypeId"></param>Unique Id for each Document Type (eg Invoice,Aadhaar etc)

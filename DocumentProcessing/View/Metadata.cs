@@ -41,10 +41,5 @@ namespace DocumentProcessing.View
         /// </summary>
         public int MetadataTypeId { get; set; }
 
-        /// <summary>
-        /// Gets and sets unique Id for each Document Type
-        /// </summary>
-        public int AttributeId { get; set; }
-
     }//Metadata
 }
