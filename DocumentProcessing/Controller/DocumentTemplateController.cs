@@ -23,11 +23,11 @@ namespace DocumentProcessing.Controller
         /// <returns></returns>
         public List<DocumentTemplate> GetDocTemplateByType(Common.OcrType ocrType)
         {
-            List<DocumentTemplate> test = null;
+            List<DocumentTemplate> docTemplateList = null;
             try
             {
-                if (ocrType > 0)
-                { 
+                if ((int)ocrType > 0)
+                {
                     DocumentTemplateModel documentTemlateModel = new DocumentTemplateModel();
                     documentTemlateModel.GetDocTemplateByType(ocrType);
                 }
@@ -36,7 +36,7 @@ namespace DocumentProcessing.Controller
             {
                 Log.FileLog(Common.LogType.Error, ex.Message);
             }
-            return test;
+            return docTemplateList;
         }
 
     }//DocumentTemplateController

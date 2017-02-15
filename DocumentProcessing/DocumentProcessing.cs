@@ -39,19 +39,16 @@ namespace DocumentProcessing.DocumentProcess
         {
             // Setting log path for testing purpose
             Log.LogFilePath = _logFilePath;
-            int AttributeId;
+            
             try
             {
                 // Saswat Code Test purpose
                 MailServerDetailController mailServerDetailController = new MailServerDetailController(_sourceFilePath);
                 mailServerDetailController.DownloadAttachments();
 
-                AttributeId = 1;
-
                 // Add logic for downloading mails from mailserver
                 // How to identify the type of document(It is PAN, INVOICE ,KYC or PASSPORT)
                 // We are assuming that the name of document type is present in attachment
-
 
                 #region OCR Processing
                 // Starts processing with both OCRs
@@ -68,7 +65,7 @@ namespace DocumentProcessing.DocumentProcess
                     {
                         //Logic for performance storing 
                         // Logic for extraction 
-                        var result = ExtractDataFromFile(Common.OcrType.Abbyy,AttributeId);
+                        var result = ExtractDataFromFile(Common.OcrType.Abbyy);
                         foreach (Dictionary<string, string> dicResult in result)
                         {
                             if (dicResult.Count > 0)
@@ -83,7 +80,7 @@ namespace DocumentProcessing.DocumentProcess
                     if (!(aspireOcrProcess.IsAlive || isAspireProcessCompleted))
                     {
                         // Logic for extraction 
-                        var result = ExtractDataFromFile(Common.OcrType.Aspire,AttributeId);
+                        var result = ExtractDataFromFile(Common.OcrType.Aspire);
                         foreach (Dictionary<string, string> dicResult in result)
                         {
                             if (dicResult.Count > 0)
@@ -173,16 +170,14 @@ namespace DocumentProcessing.DocumentProcess
         /// </summary>
         /// <param name="ocrType"></param>
         /// <returns></returns>
-        private List<Dictionary<string, string>> ExtractDataFromFile(Common.OcrType ocrType,int AttributeId)
+        private List<Dictionary<string, string>> ExtractDataFromFile(Common.OcrType ocrType)
         {
-            //For testing purpose
-            AttributeId = 1;
             //For testing purpose
             List<Dictionary<string, string>> listDictExtractedData = null;
             ExtractData extractData = new ExtractData(_targetFilePath, _errorFilePath, _processedFilePath);
             try
             {
-                listDictExtractedData = extractData.GetData(ocrType, AttributeId);
+                listDictExtractedData = extractData.GetData(ocrType);
             }
             catch (Exception ex)
             {
@@ -229,11 +224,6 @@ namespace DocumentProcessing.DocumentProcess
                 //sh.Cells[i, "G"] = dicExtractedData["12"];
                 //if (dicExtractedData.ContainsKey("Address"))
                 //    sh.Cells[i, "H"] = "PAN";
-
-
-
-
-
 
             }
             wb.Save(); wb.Close(true); excel.Quit();

@@ -18,6 +18,27 @@ namespace DocumentProcessing.Ocr.AspireOcr
         private string _fileErrorPath;
         public AspireOcrProcessingUnit(string sourcePath, string targetPath, string processedFilesPath, string errorFilePath)
         {
+            //checking the required folders present or not if not create
+            bool exists = Directory.Exists(sourcePath);
+
+            if (!exists)
+                Directory.CreateDirectory(sourcePath);
+
+            exists = Directory.Exists(targetPath);
+
+            if (!exists)
+                Directory.CreateDirectory(targetPath);
+
+            exists = Directory.Exists(processedFilesPath);
+
+            if (!exists)
+                Directory.CreateDirectory(processedFilesPath);
+
+            exists = Directory.Exists(errorFilePath);
+
+            if (!exists)
+                Directory.CreateDirectory(errorFilePath);
+
             _fileSourcePath = sourcePath;
             _fileTargetPath = targetPath;
             _fileProcessedPath = processedFilesPath;

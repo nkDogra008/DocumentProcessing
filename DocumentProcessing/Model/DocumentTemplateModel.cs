@@ -25,40 +25,48 @@ namespace DocumentProcessing.Model
         }//DocumentTemplateModel
 
         /// <summary>
-        /// GetDocTemplateByType
+        /// This method returns rows from Docuemnt template table filtered by OcrId
         /// </summary>
         /// <param name="ocrType"></param>
         /// <returns></returns>
         public List<DocumentTemplate> GetDocTemplateByType(Common.OcrType ocrType)
         {
-            List<DocumentTemplate> listDocTemplate = null;
+            //List is created to store DocTemplate values
+            List<DocumentTemplate> listDocTemplate = new List<DocumentTemplate>();
             IDataReader reader;
-            DocumentTemplate doctemplate;
+            DocumentTemplate doctemplate = null;
             try
             {
-                string spName = "sp_getDocTemplateDetails";
+                //StoredProcedure name initialization
+                string spName = "sp_getDocumentTemplateDetails";
+                //Getting storedprocedure from DB and storing in DbCommand variable
                 DbCommand dbCommand = _dbConnection.GetStoredProcCommand(spName);
-                _dbConnection.AddInParameter(dbCommand, "OcrId", DbType.String, ocrType);
+                //Adding parameter in DB
+                _dbConnection.AddInParameter(dbCommand, "OcrId", DbType.Int32, (int)ocrType);
+                //Reader is used to execuit dbCommand
                 using (reader = _dbConnection.ExecuteReader(dbCommand))
                 {
+                    //Loop is used to get values from db and add into list
                     while (reader.Read())
                     {
                         doctemplate = new DocumentTemplate();
                         doctemplate.DocTemplateId = reader.GetInt32(reader.GetOrdinal("Id"));
                         doctemplate.OcrTypeId = (Common.OcrType)reader.GetInt32(reader.GetOrdinal("OcrId"));
-                        doctemplate.DocTypeId = reader.GetInt32(reader.GetOrdinal("MetadataTypeId"));
-                        doctemplate.A_Id = reader.GetInt32(reader.GetOrdinal("AId"));
+                        //doctemplate.DocTypeId = reader.GetInt32(reader.GetOrdinal("MetadataTypeId"));
+                        doctemplate.A_Id = reader.GetInt32(reader.GetOrdinal("AttributeId"));
                         doctemplate.LineNo = reader.GetInt32(reader.GetOrdinal("LineNumber"));
                         listDocTemplate.Add(doctemplate);
                     }
                 }
             }
+            //Error handling
             catch (Exception ex)
             {
                 Log.FileLog(Common.LogType.Error, ex.ToString());
 
             }
+            //Returns the list
             return listDocTemplate;
-        }//listDocTemplate
+        }//GetDocTemplateByType
     }//DocumentTemplateModel
 }

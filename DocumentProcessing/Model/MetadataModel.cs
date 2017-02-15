@@ -77,7 +77,6 @@ namespace DocumentProcessing.Model
                    // metadata.AttributeName = reader.GetString(reader.GetOrdinal("AttributeName"));
                     listMetadata.Add(metadata);
                 }
-
             }
             return listMetadata;
         }//getMetadataByTypeId

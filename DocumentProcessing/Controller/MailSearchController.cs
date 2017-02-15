@@ -18,9 +18,14 @@ namespace DocumentProcessing.Controller
     class MailSearchController
     {
         //private FindItemsResults<Item> searchResult;
-        private IEnumerable<string> senderList;
-        private IEnumerable<string> subjectList;
-        private IEnumerable<string> bodyList;
+      
+        
+        MailServerDetailController mailServerDetailController = new MailServerDetailController();
+        private string type;
+        private string format;
+        List<string> subjectList = new List<string>();
+        List<string> senderList = new List<string>();
+        List<string> bodyList = new List<string>();
 
         /// <summary>
         /// 
@@ -32,39 +37,38 @@ namespace DocumentProcessing.Controller
         public string senderEmail { get; set; }
         public MailSearchController()
         {
-            
+
             Dictionary<string, string> dictSearchMailCriteria = null;
             MailCriteriaController mailCriteriaController = new MailCriteriaController();
             dictSearchMailCriteria = mailCriteriaController.GetMailSearchCriteria();
             string subject = null;
             string mailSearch = null;
-            
-
-
-            List<string> subjectList = new List<string>();
-                List<string> senderList = new List<string>();
-                List<string> bodyList = new List<string>();
+                       
+            if (dictSearchMailCriteria != null)
                 foreach (KeyValuePair<string, string> keyValue in dictSearchMailCriteria)
                 {
 
                     subject = keyValue.Value;
                     mailSearch = keyValue.Key;
+                    //PhraseToSearch = keyValue.Key;
                     if (subject == "Subject")
                     {
                         subjectList.Add(mailSearch);
+                        //subjectList.Add(PhraseToSearch);
 
                     }
                     else if (subject == "FromEmail")
                     {
                         senderList.Add(mailSearch);
+                        //senderList.Add(PhraseToSearch);
                     }
                     else
                         bodyList.Add(mailSearch);
+                    //bodyList.Add(PhraseToSearch);
                 }
-            }//MailSearchController
+        }//MailSearchController
 
-        /// <summary>
-        /// Class for mail search criteria which dynamically
+        /// <summary>/// Class for mail search criteria which dynamically
         ///  takes the search pattern from the database 
         /// </summary>
         /// <param name="condition">The search condition is passed from the xml file</param>
@@ -76,7 +80,7 @@ namespace DocumentProcessing.Controller
             SearchFilter.ContainsSubstring subjectFilter = null;
             SearchFilter.ContainsSubstring bodyFilter = null;
             try
-            { 
+            {
                 DateTime date = DateTime.Now.AddDays(-1);
                 SearchFilter.IsGreaterThanOrEqualTo filter = new SearchFilter.IsGreaterThanOrEqualTo(ItemSchema.DateTimeReceived, date);
                 searchResult = exchangeService.FindItems(WellKnownFolderName.Inbox, filter, new ItemView(500));
@@ -133,35 +137,53 @@ namespace DocumentProcessing.Controller
 
         private void DownLoadattachment(outlook.MailItem eMail)
         {
-            XmlDocument reader = new XmlDocument();
-            reader.Load("settings.xml");
+            MetadataController metadataController = new MetadataController();
+            List<Metadata> metadataList=metadataController.GetAllMetadataDetails();
 
-            // Path where attachments will be saved
-            string filePath = reader.GetElementsByTagName("path")[0].InnerText;
-
-            //Attachment extensions to save are stored in an array
-            string[] extensionsArray = { ".jpg", ".jpeg", ".pdf", ".png", ".PNG", ".txt" };
-
-
-            //Attachments are stored in a variable
-            var attachments = eMail.Attachments;
-
-
-            //Checks whether attachment count is not zero
-            if (attachments.Count != 0)
+            try
             {
-                //Loops through each attachment of the mail
-                for (int i = 1; i < attachments.Count; i++)
+    
+                foreach (Metadata metadata in metadataList)
                 {
-                    string fileName = attachments[i].FileName;
-                    //Checks for the extension in the attachments
-                    if (extensionsArray.Any(attachments[i].FileName.Contains) && fileName.Contains("PAN"))
+                    type = metadata.Type;
+                    format = metadata.Format;
+                    XmlDocument reader = new XmlDocument();
+                    //Loads the xml file into the instance
+                    reader.Load("\\din51002616\\New folder\\Updated Project\\DocumentProcessing\\DocumentProcessing\\setting.xml");
+
+                    // Path where attachments will be saved
+                    string filePath = reader.GetElementsByTagName("path")[0].InnerText;
+
+                    //Attachment extensions to save are stored in an array
+                    string[] extensionString = format.Split(',');
+
+
+                    //Attachments are stored in a variable
+                    var attachments = eMail.Attachments;
+
+
+                    //Checks whether attachment count is not zero
+                    if (attachments.Count != 0)
                     {
-                        //Saves the attachment into the filepath
-                        attachments[i].SaveAsFile(filePath + attachments[i].FileName);
+                        //Loops through each attachment of the mail
+                        for (int i = 1; i < attachments.Count; i++)
+                        {
+                            string fileName = attachments[i].FileName;
+                            //Checks for the extension in the attachments
+                            if (extensionString.Any(attachments[i].FileName.Contains) && fileName.Contains(type))
+                            {
+                                //Saves the attachment into the filepath
+                                attachments[i].SaveAsFile(filePath + attachments[i].FileName);
+                            }
+                        }
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                Log.FileLog(Common.LogType.Error, ex.ToString());
+            }
+            
         }
         public void OutlookMailSearch(string wordInSubject, outlook.Application app)
         {
@@ -182,14 +204,14 @@ namespace DocumentProcessing.Controller
             outlook.Items items = folderInbox.Items;
             foreach (outlook.MailItem eMail in items.Restrict("[ReceivedTime] > '" + date.ToString("MM/dd/yyyy HH:mm") + "'"))
             {
-                foreach (string body in bodyList)
+                foreach (string subjectCriteria in subjectList)
                 {
-                    foreach (string subject in subjectList)
+                    foreach (string bodyCriteria in bodyList)
                     {
                         if (condition == "OR" && senderList.Contains(eMail.SenderName))
                         {
 
-                            if ((eMail != null && eMail.Subject != null && eMail.Subject.Contains(subject)) || (eMail.Body != null && eMail.Body.Contains(body)))
+                            if ((eMail != null && eMail.Subject != null && eMail.Subject.Contains(subjectCriteria)) || (eMail.Body != null && eMail.Body.Contains(bodyCriteria)))
                             {
                                 DownLoadattachment(eMail);
                             }
@@ -197,7 +219,7 @@ namespace DocumentProcessing.Controller
                         else if (condition == "AND" && senderList.Contains(eMail.SenderName))
                         {
 
-                            if ((eMail != null && eMail.Subject != null && eMail.Subject.Contains(subject)) && eMail.Body.Contains(body))
+                            if ((eMail != null && eMail.Subject != null && eMail.Subject.Contains(subjectCriteria)) && eMail.Body.Contains(bodyCriteria))
                             {
                                 DownLoadattachment(eMail);
                             }
@@ -211,5 +233,5 @@ namespace DocumentProcessing.Controller
 
 }//MailSearchController
 
-    
+
 

@@ -32,6 +32,27 @@ namespace DocumentProcessing.Ocr.AbbyyOcr
         private string _fileErrorPath;
         public AbbbyOcrProcessingunit(string sourcePath, string targetPath, string processedFilesPath, string errorFilePath)
         {
+            //checking the required folders present or not if not create
+            bool exists = Directory.Exists(sourcePath);
+
+            if (!exists)
+               Directory.CreateDirectory(sourcePath);
+
+           exists = Directory.Exists(targetPath);
+
+            if (!exists)
+                Directory.CreateDirectory(targetPath);
+
+            exists =Directory.Exists(processedFilesPath);
+
+            if (!exists)
+                Directory.CreateDirectory(processedFilesPath);
+
+            exists = Directory.Exists(errorFilePath);
+
+            if (!exists)
+                Directory.CreateDirectory(errorFilePath);
+
             if (sourcePath != string.Empty && targetPath != string.Empty)
             {
                 restClient = new RestServiceClient();

@@ -9,6 +9,7 @@ using System.Xml;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Reflection;
+using System.Collections.Generic;
 
 namespace DocumentProcessing.Controller
 {
@@ -24,6 +25,18 @@ namespace DocumentProcessing.Controller
         private string _saveAttachmentPath = string.Empty;
         private string _serverType = string.Empty;
         private string _phraseToSearch = string.Empty;
+        Dictionary<string, string> dictGetMetadataDetails = null;
+        private string type;
+        private string format;
+
+
+        /// <summary>
+        /// Default Constructor
+        /// </summary>
+        public MailServerDetailController()
+        {
+
+        }//MailServerDetailController
 
         /// <summary>
         /// This method controls the mail server details
@@ -31,8 +44,14 @@ namespace DocumentProcessing.Controller
         /// <param name="filePathToSaveAttachments">Path to save the attachment is passed as parameter</param>
         public MailServerDetailController(string filePathToSaveAttachments)
         {
+
             //Contructor will load all the details from XML file
             // Path of XML to be specified
+            bool exists = System.IO.Directory.Exists(filePathToSaveAttachments);
+
+            if (!exists)
+                System.IO.Directory.CreateDirectory(filePathToSaveAttachments);
+
             _saveAttachmentPath = filePathToSaveAttachments;
             SetMailServerDetails();
         }
@@ -51,7 +70,7 @@ namespace DocumentProcessing.Controller
                 XmlDocument reader = new XmlDocument();
 
                 //Loads the xml file into the instance
-                reader.Load("settings.xml");
+                reader.Load(@"D:\Project\SettingFile\Settings.xml");
 
                 //Initializes all the required variables to Empty
                 string username = string.Empty;
@@ -81,8 +100,8 @@ namespace DocumentProcessing.Controller
                 if (!string.IsNullOrEmpty(reader.GetElementsByTagName("server")[0].InnerText))
                     _serverType = reader.GetElementsByTagName("server")[0].InnerText;
 
-                if (!string.IsNullOrEmpty(reader.GetElementsByTagName("phrase")[0].InnerText))
-                    _phraseToSearch = reader.GetElementsByTagName("phrase")[0].InnerText;
+                //if (!string.IsNullOrEmpty(reader.GetElementsByTagName("phrase")[0].InnerText))
+                //    _phraseToSearch = reader.GetElementsByTagName("phrase")[0].InnerText;
 
 
 
@@ -137,7 +156,7 @@ namespace DocumentProcessing.Controller
         private void GetAttachmentsFromExchangeServer()
         {
             MailSearchController mailSearchController = new MailSearchController();
-            mailSearchController.PhraseToSearch = _phraseToSearch;
+            //mailSearchController.PhraseToSearch = _phraseToSearch;
             try
             {
                 //Creates an instance of ExchangeService
@@ -153,42 +172,50 @@ namespace DocumentProcessing.Controller
                 //Class Mail search criteria is called and the returned value is stored in a variable
                 FindItemsResults<Item> findResults = mailSearchController.MailSearchCriteria(_mailSearchCondition, exchangeService);
 
-
-                Metadata metadata = new Metadata();
-                string[] format = metadata.Format.Split(',');
-                //Loops for all mails in the variable 
-                foreach (Item item in findResults)
+                MetadataController metadataController = new MetadataController();
+                List<Metadata> metadataList = metadataController.GetAllMetadataDetails();
+                foreach (Metadata metadata in metadataList)
                 {
+                    type = metadata.Type;
+                    format = metadata.Format;
 
-                    EmailMessage message = EmailMessage.Bind(exchangeService, item.Id);
-
-                    //Checks for attachment in the email
-                    if (message.HasAttachments)
+                    //Loops for all mails in the variable 
+                    foreach (Item item in findResults)
                     {
-                        //Attachments are stored in a collection
-                        AttachmentCollection attachmentCollection = message.Attachments;
 
-                        //Loops for each attachment in the collection
-                        foreach (Attachment attachment in attachmentCollection)
+                        EmailMessage message = EmailMessage.Bind(exchangeService, item.Id);
+
+                        //Checks for attachment in the email
+                        if (message.HasAttachments)
                         {
-                            string fileName = attachment.Name;
-                            if (fileName.Contains("Invoice"))
-                            {
-                                //The extensions extracted from the attachment name and stored in a variable 
-                                var extension = attachment.Name.Split('.')[1];
+                            //Attachments are stored in a collection
+                            AttachmentCollection attachmentCollection = message.Attachments;
 
-                                //Checks the extension type
-                                // Check dynamically
-                                if (extension == format[0] || extension == format[1] || extension == format[2] ||
-                                    extension == format[3] || extension == format[4] || extension == format[5])
+                            //Loops for each attachment in the collection
+                            foreach (Attachment attachment in attachmentCollection)
+                            {
+                                string fileName = attachment.Name;
+                                //The extensions extracted from the attachment name and stored in a variable
+                                var fileExtension = attachment.Name.Split('.')[1];
+                                if (fileName.Contains(type))
                                 {
-                                    //Stores the attachment in a variable
-                                    FileAttachment fileAttachment = attachment as FileAttachment;
-                                    if (_saveAttachmentPath != string.Empty)
-                                        //Attachment is saved in filepath
-                                        fileAttachment.Load(_saveAttachmentPath + attachment.Name);
-                                    else
-                                        Log.FileLog(Common.LogType.ApplicationError, "Attachment download path not set");
+                                    string supportedFormats = metadataList.Find(a => a.Type == type).Format;
+                                    string[] arrayExtensions = supportedFormats.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                                    //Checks the extension type
+                                    // Check dynamically
+                                    //if (extension == format[0] || extension == format[1] || extension == format[2] ||
+                                    //    extension == format[3] || extension == format[4] || extension == format[5])
+                                    arrayExtensions = arrayExtensions.Select(a => a.Trim()).ToArray();
+                                    if (arrayExtensions.Contains(fileExtension))
+                                    {
+                                        //Stores the attachment in a variable
+                                        FileAttachment fileAttachment = attachment as FileAttachment;
+                                        if (_saveAttachmentPath != string.Empty)
+                                            //Attachment is saved in filepath
+                                            fileAttachment.Load(_saveAttachmentPath + attachment.Name);
+                                        else
+                                            Log.FileLog(Common.LogType.ApplicationError, "Attachment download path not set");
+                                    }
                                 }
                             }
 
@@ -225,10 +252,10 @@ namespace DocumentProcessing.Controller
 
 
                 mailSearchController.OutlookMailSearch(_phraseToSearch, application);
-                
 
-                 //Closes the Outlook
-                 Marshal.ReleaseComObject(application);
+
+                //Closes the Outlook
+                Marshal.ReleaseComObject(application);
             }
             catch (Exception ex)
             {

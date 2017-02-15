@@ -24,14 +24,16 @@ namespace DocumentProcessing.Model
         }//MailCriteriaModel
 
         /// <summary>
-        /// 
+        /// This method returns subject and criteria for filtering mails
         /// </summary>
         /// <returns></returns>
         public Dictionary<string, string> GetMailSearchCriteria()
         {
-            Dictionary<string, string> dictMailSearchCriteria = null;
+            Dictionary<string, string> dictMailSearchCriteria = new Dictionary<string, string>();
+            Dictionary<string, string> dictMetadata = new Dictionary<string, string>();
             IDataReader reader;
             string key = string.Empty, value = string.Empty;
+
             try
             {
                 string spName = "sp_getMailSearchDetails ";

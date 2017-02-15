@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<settings>
+
+
+  <mailserver>
+    <username>saswarat</username>
+    <password>Swa.s@s904</password>
+    <mailboxserver>https://in-hyd-casnd3.corp.capgemini.com/ews/Exchange.asmx</mailboxserver>
+    <domain>Corp</domain>
+    <port></port>
+    <sslrequired></sslrequired>
+  </mailserver>
+
+  <mailsearchcondition>
+    <searchcondition>OR</searchcondition>
+  </mailsearchcondition>
+
+  <attachmentpath>
+    <path>D:\\Attachments\\</path>
+  </attachmentpath>
+
+  <doctype>
+    <doc1>PAN</doc1>
+    <doc2>Passport</doc2>
+    <doc3>Invoice</doc3>
+  </doctype>
+
+  <server>
+    <servername>Exchange server</servername>
+  </server>
+
+</settings>

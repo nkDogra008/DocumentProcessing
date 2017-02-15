@@ -12,7 +12,7 @@ namespace DocumentProcessing.Controller
     /// <summary>
     /// To interact with MailCriteriaModel and MailCriteria
     /// </summary>
-    class MailCriteriaController:Log
+    class MailCriteriaController : Log
     {
         /// <summary>
         /// Default Constructor
@@ -21,7 +21,7 @@ namespace DocumentProcessing.Controller
         {
 
         }//MailCriteriaController
-      
+
         /// <summary>
         /// This method gets Mail Search Criteria Details
         /// </summary>
@@ -29,17 +29,19 @@ namespace DocumentProcessing.Controller
         public Dictionary<string, string> GetMailSearchCriteria()
         {
             Dictionary<string, string> dictMailSearchCriteria = null;
+
             try
             {
                 MailCriteriaModel mailCriteriaModel = new MailCriteriaModel();
                 dictMailSearchCriteria = mailCriteriaModel.GetMailSearchCriteria();
+
             }
             catch (Exception ex)
             {
                 Log.FileLog(Common.LogType.Error, ex.ToString());
             }
             return dictMailSearchCriteria;
-        }
+        }//GetMailSearchCriteria
 
     }//MailCriteriaController
 }
