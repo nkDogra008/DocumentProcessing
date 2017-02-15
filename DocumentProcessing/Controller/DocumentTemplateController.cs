@@ -3,21 +3,24 @@ using DocumentProcessing.Utility;
 using DocumentProcessing.View;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DocumentProcessing.Controller
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class DocumentTemplateController
     {
+        /// <summary>
+        /// Default Constructor
+        /// </summary>
         public DocumentTemplateController()
         {
 
         }//DocumentTemplateController
 
         /// <summary>
-        /// 
+        /// This method returns rows from Docuemnt template table filtered by OcrId
         /// </summary>
         /// <param name="ocrType"></param>
         /// <returns></returns>
@@ -26,10 +29,10 @@ namespace DocumentProcessing.Controller
             List<DocumentTemplate> docTemplateList = null;
             try
             {
-                if ((int)ocrType > 0)
+                if (ocrType > 0)
                 {
-                    DocumentTemplateModel documentTemlateModel = new DocumentTemplateModel();
-                    documentTemlateModel.GetDocTemplateByType(ocrType);
+                    DocumentTemplateModel documentTemplateModel = new DocumentTemplateModel();
+                    docTemplateList=documentTemplateModel.GetDocTemplateByType(ocrType);
                 }
             }
             catch (Exception ex)
@@ -37,7 +40,7 @@ namespace DocumentProcessing.Controller
                 Log.FileLog(Common.LogType.Error, ex.Message);
             }
             return docTemplateList;
-        }
+        }//GetDocTemplateByType
 
     }//DocumentTemplateController
 }

@@ -20,7 +20,7 @@ namespace DocumentProcessing.Ocr.DataExtraction
         private Common.OcrType _typeOfOcr;
         private int attributeId;
         private string type;
-        private int docAttributeId;
+      
         /// <summary>
         /// 
         /// </summary>
@@ -79,124 +79,127 @@ namespace DocumentProcessing.Ocr.DataExtraction
                 if (dirInfo.Exists)
                 {
                     FileInfo[] filesInDirectory = dirInfo.GetFiles();
-                    foreach (Metadata metadata in metadataList)
+
+                    foreach (FileInfo file in filesInDirectory)
                     {
-                        type = metadata.Type;
-                        attributeId = metadata.AttributeId;
-                        foreach (FileInfo file in filesInDirectory)
+                        foreach (Metadata metadata in metadataList)
                         {
-                            int lineNo = 1;
-                            dicExtractedData = new Dictionary<string, string>();
-                            dicExtractedTemplateData = new Dictionary<string, string>();
-                            if (file.Name.Contains(type))
+                            if (file.Name.Contains(metadata.Type))
                             {
-                                docAttributeId = attributeId;
+                                type = metadata.Type;
+                                attributeId = metadata.AttributeId;
                             }
-                            if (file.Name.Contains(ocrType.ToString()))
+                        }
+
+                        int lineNo = 1;
+                        dicExtractedData = new Dictionary<string, string>();
+                        dicExtractedTemplateData = new Dictionary<string, string>();
+                       
+                        if (file.Name.Contains(ocrType.ToString()))
+                        {
+                            fileStream = file.OpenRead();
+                            using (var streamReader = new StreamReader(fileStream))
                             {
-                                fileStream = file.OpenRead();
-                                using (var streamReader = new StreamReader(fileStream))
+                                while (streamReader.Peek() != -1)
                                 {
-                                    while (streamReader.Peek() != -1)
+                                    eachLineInFile = streamReader.ReadLine();
+                                    if (eachLineInFile.Trim().Length > 0)
                                     {
-                                        eachLineInFile = streamReader.ReadLine();
-                                        if (eachLineInFile.Trim().Length > 0)
+                                        //{
+                                        //    if (streamReader.ReadLine() != null)
+                                        //        continue;
+                                        //    else
+                                        //        break;
+                                        //}
+                                        // If the document type have Legends present in it.
+                                        // Example there is attribute present on document
+                                        if (!file.Name.Contains("PAN"))
                                         {
-                                            //{
-                                            //    if (streamReader.ReadLine() != null)
-                                            //        continue;
-                                            //    else
-                                            //        break;
-                                            //}
-                                            // If the document type have Legends present in it.
-                                            // Example there is attribute present on document
-                                            if (!file.Name.Contains("PAN"))
-                                            {
-                                                attributeList = attributeController.GetAttributesById(docAttributeId);
-                                                /*
-                                                listOfAtttributesToGet = new List<string>() { "Name*", "Date of Birth*", "Mother's Name*", "Name of Spouse", "Country Of Birth", "UID",
-                                                "Grand Total","Amount","Order ID:","Sold By","Order Date:","VAT/TIN:","Service tax #:","Invoice Date:"*/
+                                            attributeList = attributeController.GetAttributesById(attributeId);
+                                            /*
+                                            listOfAtttributesToGet = new List<string>() { "Name*", "Date of Birth*", "Mother's Name*", "Name of Spouse", "Country Of Birth", "UID",
+                                            "Grand Total","Amount","Order ID:","Sold By","Order Date:","VAT/TIN:","Service tax #:","Invoice Date:"*/
 
-                                                foreach (DocumentAttributes docAttribute in attributeList)
+                                            foreach (DocumentAttributes docAttribute in attributeList)
+                                            {
+                                                var attribute = docAttribute.AttributeName;
+                                                if (eachLineInFile.Contains(attribute))
                                                 {
-                                                    var attribute = docAttribute.AttributeName;
-                                                    if (eachLineInFile.Contains(attribute))
-                                                    {
-                                                        eachLineInFile = eachLineInFile.Replace(attribute, string.Empty).Trim();
-                                                        // We can add logic to replace special characters from line
-                                                        if (eachLineInFile.Length > 0)
-                                                            dicExtractedData.Add(attribute + lineNo.ToString(), eachLineInFile.Trim());
-                                                    }
-                                                    else
-                                                    {
-                                                        //Check for other phrase in line 
-                                                        //Logic for checking all the phrase(alias of attributes)
-                                                    }
-
+                                                    eachLineInFile = eachLineInFile.Replace(attribute, string.Empty).Trim();
+                                                    // We can add logic to replace special characters from line
+                                                    if (eachLineInFile.Length > 0)
+                                                        dicExtractedData.Add(attribute + lineNo.ToString(), eachLineInFile.Trim());
                                                 }
-                                            }
-                                            else
-                                            {
-                                                #region Testing Purpose
-                                                DocumentTemplateController docTemplateController = new DocumentTemplateController();
-                                                List<DocumentTemplate> listDocumentTemplate = docTemplateController.GetDocTemplateByType(_typeOfOcr);
-                                                /*  if (ocrType == Common.OcrType.Abbyy)
-                                                 {
-                                                     DocumentTemplate docTemp1 = new DocumentTemplate() { AttributeId = 1, DocId = 1, DocTemplateId = 1, LineNo = 5, OcrTypeId = Common.OcrType.Abbyy };
-                                                     listDocumentTemplate.Add(docTemp1);
-                                                     docTemp1 = new DocumentTemplate() { AttributeId = 2, DocId = 1, DocTemplateId = 2, LineNo = 7, OcrTypeId = Common.OcrType.Abbyy };
-                                                     listDocumentTemplate.Add(docTemp1);
-                                                     docTemp1 = new DocumentTemplate() { AttributeId = 3, DocId = 1, DocTemplateId = 3, LineNo = 9, OcrTypeId = Common.OcrType.Abbyy };
-                                                     listDocumentTemplate.Add(docTemp1);
-                                                     docTemp1 = new DocumentTemplate() { AttributeId = 4, DocId = 1, DocTemplateId = 4, LineNo = 12, OcrTypeId = Common.OcrType.Abbyy };
-                                                     listDocumentTemplate.Add(docTemp1);
-                                                 }
-                                                 if (ocrType == Common.OcrType.Aspire)
-                                                 {
-                                                     DocumentTemplate docTemp1 = new DocumentTemplate() { AttributeId = 1, DocId = 1, DocTemplateId = 1, LineNo = 4, OcrTypeId = Common.OcrType.Aspire };
-                                                     listDocumentTemplate.Add(docTemp1);
-                                                     docTemp1 = new DocumentTemplate() { AttributeId = 2, DocId = 1, DocTemplateId = 2, LineNo = 5, OcrTypeId = Common.OcrType.Aspire };
-                                                     listDocumentTemplate.Add(docTemp1);
-                                                     docTemp1 = new DocumentTemplate() { AttributeId = 3, DocId = 1, DocTemplateId = 3, LineNo = 6, OcrTypeId = Common.OcrType.Aspire };
-                                                     listDocumentTemplate.Add(docTemp1);
-                                                     docTemp1 = new DocumentTemplate() { AttributeId = 4, DocId = 1, DocTemplateId = 4, LineNo = 8, OcrTypeId = Common.OcrType.Aspire };
-                                                     listDocumentTemplate.Add(docTemp1);
-                                                 }
-                                                 */
+                                                else
+                                                {
+                                                    //Check for other phrase in line 
+                                                    //Logic for checking all the phrase(alias of attributes)
+                                                }
 
-
-                                                //foreach (DocumentTemplate docTemplate in listDocumentTemplate)
-                                                //{
-                                                //    // Get attribute name depending using attribute id
-
-                                                //}
-
-                                                #endregion Testing Purpose
-                                                // above logic should be out of loop
-                                                // Extracts data depending upon document template
-                                                ExtractDataUsingDocTemplate(dicExtractedTemplateData, lineNo, eachLineInFile, listDocumentTemplate);
                                             }
                                         }
-                                        // counter increments for fetching correct line
-                                        lineNo++;
+                                        else
+                                        {
+                                            #region Testing Purpose
+                                            DocumentTemplateController docTemplateController = new DocumentTemplateController();
+                                            List<DocumentTemplate> listDocumentTemplate = docTemplateController.GetDocTemplateByType(_typeOfOcr);
+                                            /*  if (ocrType == Common.OcrType.Abbyy)
+                                             {
+                                                 DocumentTemplate docTemp1 = new DocumentTemplate() { AttributeId = 1, DocId = 1, DocTemplateId = 1, LineNo = 5, OcrTypeId = Common.OcrType.Abbyy };
+                                                 listDocumentTemplate.Add(docTemp1);
+                                                 docTemp1 = new DocumentTemplate() { AttributeId = 2, DocId = 1, DocTemplateId = 2, LineNo = 7, OcrTypeId = Common.OcrType.Abbyy };
+                                                 listDocumentTemplate.Add(docTemp1);
+                                                 docTemp1 = new DocumentTemplate() { AttributeId = 3, DocId = 1, DocTemplateId = 3, LineNo = 9, OcrTypeId = Common.OcrType.Abbyy };
+                                                 listDocumentTemplate.Add(docTemp1);
+                                                 docTemp1 = new DocumentTemplate() { AttributeId = 4, DocId = 1, DocTemplateId = 4, LineNo = 12, OcrTypeId = Common.OcrType.Abbyy };
+                                                 listDocumentTemplate.Add(docTemp1);
+                                             }
+                                             if (ocrType == Common.OcrType.Aspire)
+                                             {
+                                                 DocumentTemplate docTemp1 = new DocumentTemplate() { AttributeId = 1, DocId = 1, DocTemplateId = 1, LineNo = 4, OcrTypeId = Common.OcrType.Aspire };
+                                                 listDocumentTemplate.Add(docTemp1);
+                                                 docTemp1 = new DocumentTemplate() { AttributeId = 2, DocId = 1, DocTemplateId = 2, LineNo = 5, OcrTypeId = Common.OcrType.Aspire };
+                                                 listDocumentTemplate.Add(docTemp1);
+                                                 docTemp1 = new DocumentTemplate() { AttributeId = 3, DocId = 1, DocTemplateId = 3, LineNo = 6, OcrTypeId = Common.OcrType.Aspire };
+                                                 listDocumentTemplate.Add(docTemp1);
+                                                 docTemp1 = new DocumentTemplate() { AttributeId = 4, DocId = 1, DocTemplateId = 4, LineNo = 8, OcrTypeId = Common.OcrType.Aspire };
+                                                 listDocumentTemplate.Add(docTemp1);
+                                             }
+                                             */
+
+
+                                            //foreach (DocumentTemplate docTemplate in listDocumentTemplate)
+                                            //{
+                                            //    // Get attribute name depending using attribute id
+
+                                            //}
+
+                                            #endregion Testing Purpose
+                                            // above logic should be out of loop
+                                            // Extracts data depending upon document template
+                                            ExtractDataUsingDocTemplate(dicExtractedTemplateData, lineNo, eachLineInFile, listDocumentTemplate);
+                                        }
                                     }
-                                }
-                                if (dicExtractedData.Count <= 0 && dicExtractedTemplateData.Count <= 0)
-                                {
-                                    // Move file in error folder( pathErrorfilesFolder)
-                                    File.Move(file.FullName, _pathErrorFilesFolder + file.Name);
-                                }
-                                else
-                                {
-                                    File.Move(file.FullName, _pathProcessedFilesFolder + file.Name);
+                                    // counter increments for fetching correct line
+                                    lineNo++;
                                 }
                             }
-                            if (dicExtractedData.Count > 0)
-                                returnedData.Add(dicExtractedData);
-                            if (dicExtractedTemplateData.Count > 0)
-                                returnedData.Add(dicExtractedTemplateData);
+                            if (dicExtractedData.Count <= 0 && dicExtractedTemplateData.Count <= 0)
+                            {
+                                // Move file in error folder( pathErrorfilesFolder)
+                                File.Move(file.FullName, _pathErrorFilesFolder + file.Name);
+                            }
+                            else
+                            {
+                                File.Move(file.FullName, _pathProcessedFilesFolder + file.Name);
+                            }
                         }
+                        if (dicExtractedData.Count > 0)
+                            returnedData.Add(dicExtractedData);
+                        if (dicExtractedTemplateData.Count > 0)
+                            returnedData.Add(dicExtractedTemplateData);
                     }
+
                 }
             }
             catch (Exception ex)

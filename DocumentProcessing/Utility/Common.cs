@@ -43,8 +43,9 @@ namespace DocumentProcessing.Utility
         public enum OcrType
         {
             // Can be used if no performance is available to compare
-            Abbyy = 2,
+
             Aspire = 1,
+            Abbyy,
             OcrNotFound,
             Datacap,
 

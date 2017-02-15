@@ -18,8 +18,8 @@ namespace DocumentProcessing.Controller
     class MailSearchController
     {
         //private FindItemsResults<Item> searchResult;
-      
-        
+
+
         MailServerDetailController mailServerDetailController = new MailServerDetailController();
         private string type;
         private string format;
@@ -43,7 +43,7 @@ namespace DocumentProcessing.Controller
             dictSearchMailCriteria = mailCriteriaController.GetMailSearchCriteria();
             string subject = null;
             string mailSearch = null;
-                       
+
             if (dictSearchMailCriteria != null)
                 foreach (KeyValuePair<string, string> keyValue in dictSearchMailCriteria)
                 {
@@ -87,7 +87,7 @@ namespace DocumentProcessing.Controller
 
                 foreach (Item item in searchResult.Items)
                 {
-                    string sender = ((EmailMessage)(item)).Sender.Name;
+                    string sender = ((EmailMessage)(item)).Sender.Address;
                     foreach (string senderName in senderList)
                     {
                         if (senderName == sender)
@@ -138,18 +138,18 @@ namespace DocumentProcessing.Controller
         private void DownLoadattachment(outlook.MailItem eMail)
         {
             MetadataController metadataController = new MetadataController();
-            List<Metadata> metadataList=metadataController.GetAllMetadataDetails();
+            List<Metadata> metadataList = metadataController.GetAllMetadataDetails();
 
             try
             {
-    
+
                 foreach (Metadata metadata in metadataList)
                 {
                     type = metadata.Type;
                     format = metadata.Format;
                     XmlDocument reader = new XmlDocument();
                     //Loads the xml file into the instance
-                    reader.Load("\\din51002616\\New folder\\Updated Project\\DocumentProcessing\\DocumentProcessing\\setting.xml");
+                    reader.Load("Settings.xml");
 
                     // Path where attachments will be saved
                     string filePath = reader.GetElementsByTagName("path")[0].InnerText;
@@ -183,7 +183,7 @@ namespace DocumentProcessing.Controller
             {
                 Log.FileLog(Common.LogType.Error, ex.ToString());
             }
-            
+
         }
         public void OutlookMailSearch(string wordInSubject, outlook.Application app)
         {
@@ -208,7 +208,7 @@ namespace DocumentProcessing.Controller
                 {
                     foreach (string bodyCriteria in bodyList)
                     {
-                        if (condition == "OR" && senderList.Contains(eMail.SenderName))
+                        if (condition == "OR" && senderList.Contains(eMail.SenderEmailAddress))
                         {
 
                             if ((eMail != null && eMail.Subject != null && eMail.Subject.Contains(subjectCriteria)) || (eMail.Body != null && eMail.Body.Contains(bodyCriteria)))
@@ -216,7 +216,7 @@ namespace DocumentProcessing.Controller
                                 DownLoadattachment(eMail);
                             }
                         }
-                        else if (condition == "AND" && senderList.Contains(eMail.SenderName))
+                        else if (condition == "AND" && senderList.Contains(eMail.SenderEmailAddress))
                         {
 
                             if ((eMail != null && eMail.Subject != null && eMail.Subject.Contains(subjectCriteria)) && eMail.Body.Contains(bodyCriteria))

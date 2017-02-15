@@ -8,22 +8,25 @@ namespace DocumentProcessing.View
 {
     public class MailSearch
     {
+        /// <summary>
+        /// Default Constructor
+        /// </summary>
         public MailSearch()
         {
         }//MailSearch
 
         /// <summary>
-        /// 
+        /// Gets and sets unique id for each search pattern
         /// </summary>
         public int MailSearchId { get; set; }
 
         /// <summary>
-        /// 
+        /// Gets and sets subject filter
         /// </summary>
         public string Subject { get; set; }
 
         /// <summary>
-        /// 
+        /// Gets and sets Phrase filter
         /// </summary>
         public string Phrase { get; set; }
 

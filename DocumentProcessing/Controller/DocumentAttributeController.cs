@@ -32,7 +32,7 @@ namespace DocumentProcessing.Controller
             List<DocumentAttributes> documentAttributes = null;
             try
             {
-                if (AttributeId != 0)
+                if (AttributeId > 0)
                 {
                     DocumentAttributeModel attributeModel = new DocumentAttributeModel();
                     documentAttributes = attributeModel.GetAttributesById(AttributeId);
