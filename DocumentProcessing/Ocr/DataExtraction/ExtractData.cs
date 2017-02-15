@@ -55,7 +55,7 @@ namespace DocumentProcessing.Ocr.DataExtraction
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="Common.OcrType"></param>
+        /// <param name="ocrType"></param>
         /// <returns></returns>
         public List<Dictionary<string, string>> GetData(Common.OcrType ocrType)
         {
@@ -65,13 +65,14 @@ namespace DocumentProcessing.Ocr.DataExtraction
             DocumentAttributeController attributeController = new DocumentAttributeController();
             MetadataController metadataController = new MetadataController();
             List<DocumentAttributes> attributeList = null;
+            List<Metadata> metadataList = null;
             _typeOfOcr = ocrType;
             try
             {
                 //Logic of getting required attributes depending on type (document type)          
                 //attributeController = new DocumentAttributeController();              
                 //List<string> listOfAtttributesToGet = new List<string>();
-                List<Metadata> metadataList = metadataController.GetAllMetadataDetails();
+                metadataList = metadataController.GetAllMetadataDetails();
                 DirectoryInfo dirInfo = new DirectoryInfo(_fileLocation);
                 FileStream fileStream = null;
                 string eachLineInFile = string.Empty;
@@ -115,7 +116,6 @@ namespace DocumentProcessing.Ocr.DataExtraction
                                                 /*
                                                 listOfAtttributesToGet = new List<string>() { "Name*", "Date of Birth*", "Mother's Name*", "Name of Spouse", "Country Of Birth", "UID",
                                                 "Grand Total","Amount","Order ID:","Sold By","Order Date:","VAT/TIN:","Service tax #:","Invoice Date:"*/
-
 
                                                 foreach (DocumentAttributes docAttribute in attributeList)
                                                 {
