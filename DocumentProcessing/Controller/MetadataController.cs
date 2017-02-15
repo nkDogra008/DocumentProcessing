@@ -40,30 +40,5 @@ namespace DocumentProcessing.Controller
             }
             return listMetadata;
         }//GetAllMetadataDetails
-
-
-        /// <summary>
-        /// This method returns rows from Metadata table filtered by MetadataTypeId
-        /// </summary>
-        /// <param name="MetadataTypeId"></param>Unique Id for each Document Type (eg Invoice,Aadhaar etc)
-        /// <returns></returns>
-        public List<Metadata> getMetadataByTypeId(int MetadataTypeId)
-        {
-            List<Metadata> listMetadata = null;
-            try
-            {
-                if (MetadataTypeId > 0)
-                {
-                    MetadataModel metadataModel = new MetadataModel();
-                    listMetadata = metadataModel.getMetadataByTypeId(MetadataTypeId);
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.FileLog(Common.LogType.Error, ex.ToString());
-            }
-            return listMetadata;
-        }
-
     }//MetadataController
 }

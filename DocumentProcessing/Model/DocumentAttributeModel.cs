@@ -33,48 +33,28 @@ namespace DocumentProcessing.Model
             List<DocumentAttributes> listAttributes = new List<DocumentAttributes>();
             DocumentAttributes attributes;
             IDataReader reader;
-
-            string spName = "sp_getAttributesById";
-            DbCommand dbCommand = _dbConnection.GetStoredProcCommand(spName);
-            _dbConnection.AddInParameter(dbCommand, "AttributeId", DbType.Int32, AttributeId);
-            using (reader = _dbConnection.ExecuteReader(dbCommand))
+            try
             {
-                while (reader.Read())
+                string spName = "sp_getAttributesById";
+                DbCommand dbCommand = _dbConnection.GetStoredProcCommand(spName);
+                _dbConnection.AddInParameter(dbCommand, "AttributeId", DbType.Int32, AttributeId);
+                using (reader = _dbConnection.ExecuteReader(dbCommand))
                 {
-                    attributes = new DocumentAttributes();
-                    attributes.A_Id = reader.GetInt32(reader.GetOrdinal("AId"));
-                    attributes.AttributeName = reader.GetString(reader.GetOrdinal("AttributeName"));
-                    listAttributes.Add(attributes);
+                    while (reader.Read())
+                    {
+                        attributes = new DocumentAttributes();
+                        attributes.A_Id = reader.GetInt32(reader.GetOrdinal("AId"));
+                        attributes.AttributeName = reader.GetString(reader.GetOrdinal("AttributeName"));
+                        listAttributes.Add(attributes);
+                    }
                 }
+            }
+            //Error Handling
+            catch (Exception ex)
+            {
+                Log.FileLog(Common.LogType.Error, ex.ToString());
             }
             return listAttributes;
         }//GetAttributesById
-
-        /// <summary>
-        /// This method gets all attributes
-        /// </summary>
-        /// <returns></returns>
-        public List<DocumentAttributes> getAllAttributes()
-        {
-            List<DocumentAttributes> listAttributes = new List<DocumentAttributes>();
-            DocumentAttributes attributes;
-            IDataReader reader;
-
-            string spName = "sp_getAllAttributes";
-            DbCommand dbCommand = _dbConnection.GetStoredProcCommand(spName);
-            using (reader = _dbConnection.ExecuteReader(dbCommand))
-            {
-                while (reader.Read())
-                {
-                    attributes = new DocumentAttributes();
-                    attributes.AttributeId = reader.GetInt32(reader.GetOrdinal("AId"));
-                    attributes.AttributeId= reader.GetInt32(reader.GetOrdinal("AttributeId")); 
-                    attributes.AttributeName = reader.GetString(reader.GetOrdinal("AttributeName"));
-                    listAttributes.Add(attributes);
-                }
-            }
-            return listAttributes;
-        }//getAllAttributes()
-
     }//DocumentAttributeModel
 }

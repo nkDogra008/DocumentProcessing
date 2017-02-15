@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace DocumentProcessing.Controller
 {
     /// <summary>
-    /// 
+    /// To interact with DocumentTemplatemodel and DocumentTemplate
     /// </summary>
     public class DocumentTemplateController
     {
@@ -22,7 +22,7 @@ namespace DocumentProcessing.Controller
         /// <summary>
         /// This method returns rows from Docuemnt template table filtered by OcrId
         /// </summary>
-        /// <param name="ocrType"></param>
+        /// <param name="ocrType"></param>Unique Id for each Ocr
         /// <returns></returns>
         public List<DocumentTemplate> GetDocTemplateByType(Common.OcrType ocrType)
         {

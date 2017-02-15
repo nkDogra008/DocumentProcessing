@@ -47,7 +47,6 @@ namespace DocumentProcessing.Controller
             if (dictSearchMailCriteria != null)
                 foreach (KeyValuePair<string, string> keyValue in dictSearchMailCriteria)
                 {
-
                     subject = keyValue.Value;
                     mailSearch = keyValue.Key;
                     //PhraseToSearch = keyValue.Key;
@@ -79,12 +78,13 @@ namespace DocumentProcessing.Controller
             FindItemsResults<Item> searchResult = null;
             SearchFilter.ContainsSubstring subjectFilter = null;
             SearchFilter.ContainsSubstring bodyFilter = null;
+            List<SearchFilter> testArraySearchFilter = new List<SearchFilter>();
             try
             {
                 DateTime date = DateTime.Now.AddDays(-1);
                 SearchFilter.IsGreaterThanOrEqualTo filter = new SearchFilter.IsGreaterThanOrEqualTo(ItemSchema.DateTimeReceived, date);
                 searchResult = exchangeService.FindItems(WellKnownFolderName.Inbox, filter, new ItemView(500));
-
+                exchangeService.LoadPropertiesForItems(searchResult.Items, new PropertySet(EmailMessageSchema.Sender));
                 foreach (Item item in searchResult.Items)
                 {
                     string sender = ((EmailMessage)(item)).Sender.Address;
@@ -103,6 +103,7 @@ namespace DocumentProcessing.Controller
                 foreach (string subjectCriteria in subjectList)
                 {
                     subjectFilter = new SearchFilter.ContainsSubstring(ItemSchema.Subject, subjectCriteria, ContainmentMode.Substring, ComparisonMode.IgnoreCase);
+                    testArraySearchFilter.Add(subjectFilter);
                 }
 
                 //Mail body filter criteria
@@ -110,21 +111,22 @@ namespace DocumentProcessing.Controller
                 foreach (string bodyCriteria in bodyList)
                 {
                     bodyFilter = new SearchFilter.ContainsSubstring(ItemSchema.Body, bodyCriteria, ContainmentMode.Substring, ComparisonMode.IgnoreCase);
+                    testArraySearchFilter.Add(bodyFilter);
                 }
                 //Checks the search condition passed from the xml file
                 if (Equals(condition, "OR") && (subjectFilter.Value != string.Empty || bodyFilter.Value != string.Empty))
                 {
                     //Logical OR condition for pattern search in subject or body is stored in a local variable
-                    SearchFilter.SearchFilterCollection orFilter = new SearchFilter.SearchFilterCollection(LogicalOperator.Or, subjectFilter, bodyFilter);
+                    SearchFilter.SearchFilterCollection orFilter = new SearchFilter.SearchFilterCollection(LogicalOperator.Or, testArraySearchFilter.ToArray());
 
                     //The mails satisfying the search criteria are stored in a variable
-                    searchResult = exchangeService.FindItems(WellKnownFolderName.SearchFolders, orFilter, new ItemView(10));
+                    searchResult = exchangeService.FindItems(WellKnownFolderName.SearchFolders, orFilter, new ItemView(1000));
                 }
                 else
                 {
                     //Logical AND condition for pattern search in subject and body is stored in a local variable
-                    SearchFilter.SearchFilterCollection andFilter = new SearchFilter.SearchFilterCollection(LogicalOperator.And, subjectFilter, bodyFilter);
-                    searchResult = exchangeService.FindItems(WellKnownFolderName.Inbox, andFilter, new ItemView(10));
+                    SearchFilter.SearchFilterCollection andFilter = new SearchFilter.SearchFilterCollection(LogicalOperator.And, testArraySearchFilter.ToArray());
+                    searchResult = exchangeService.FindItems(WellKnownFolderName.SearchFolders, andFilter, new ItemView(1000));
                 }
 
             }

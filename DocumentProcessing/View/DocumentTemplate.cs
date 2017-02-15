@@ -11,7 +11,7 @@ namespace DocumentProcessing.View
     {
 
         /// <summary>
-        /// 
+        /// To get or set template details for the documents 
         /// </summary>
         public DocumentTemplate()
         {
@@ -19,17 +19,17 @@ namespace DocumentProcessing.View
         }//DocumentTemplate
 
         /// <summary>
-        /// 
+        /// Gets and sets unique id for each document template
         /// </summary>
         public int DocTemplateId { get; set; }
 
         /// <summary>
-        /// 
+        /// Gets and sets Id for each Ocr
         /// </summary>
         public Common.OcrType OcrTypeId { get; set; }
 
         /// <summary>
-        /// 
+        /// Gets and sets unique Id for each document type(eg: Pan,Invoice etc.)
         /// </summary>
         public int DocTypeId { get; set; }
 

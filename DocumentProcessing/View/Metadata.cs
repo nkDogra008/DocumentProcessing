@@ -37,7 +37,7 @@ namespace DocumentProcessing.View
         public string Format { get; set; }
 
         /// <summary>
-        /// Gets and sets unique Id for each MetadataType
+        /// Gets and sets unique Id for each document type
         /// </summary>
         public int MetadataTypeId { get; set; }
 

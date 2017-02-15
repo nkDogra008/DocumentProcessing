@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace DocumentProcessing.View
 {
+    /// <summary>
+    /// To get or set Mail search filters
+    /// </summary>
     public class MailSearch
     {
         /// <summary>

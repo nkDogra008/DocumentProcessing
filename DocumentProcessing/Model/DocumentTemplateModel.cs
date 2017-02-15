@@ -27,14 +27,14 @@ namespace DocumentProcessing.Model
         /// <summary>
         /// This method returns rows from Docuemnt template table filtered by OcrId
         /// </summary>
-        /// <param name="ocrType"></param>
+        /// <param name="ocrType"></param>Unique Id for each Ocr
         /// <returns></returns>
         public List<DocumentTemplate> GetDocTemplateByType(Common.OcrType ocrType)
         {
             //List is created to store DocTemplate values
             List<DocumentTemplate> listDocTemplate = new List<DocumentTemplate>();
             IDataReader reader;
-            DocumentTemplate doctemplate = null;
+            DocumentTemplate doctemplate;
             try
             {
                 //StoredProcedure name initialization

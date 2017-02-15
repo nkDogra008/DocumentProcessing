@@ -44,27 +44,5 @@ namespace DocumentProcessing.Controller
             }
             return documentAttributes;
         }//GetAttributesById
-
-        /// <summary>
-        /// This method gets all Attributes
-        /// </summary>
-        /// <returns></returns>
-        public List<DocumentAttributes> getAllAttributes()
-        {
-            List<DocumentAttributes> documentAttributes = null;
-            try
-            {
-                
-                    DocumentAttributeModel attributeModel = new DocumentAttributeModel();
-                    documentAttributes = attributeModel.getAllAttributes();
-              
-            }
-            catch (Exception ex)
-            {
-                Log.FileLog(Common.LogType.Error, ex.ToString());
-            }
-            return documentAttributes;
-        }//getAllAttributes
-
     }//DocumentAttributeController
 }

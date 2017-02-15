@@ -11,12 +11,13 @@ using System.Threading.Tasks;
 namespace DocumentProcessing.Model
 {
     /// <summary>
-    /// 
+    /// To manage MailCriteria and Mail Search
     /// </summary>
     class MailCriteriaModel : SqlFactory
     {
         /// <summary>
-        /// 
+        /// Inherit factory object from SqlFactory class and get all mail search filter related data from database
+        /// Default Constructor
         /// </summary>
         public MailCriteriaModel()
         {
@@ -54,6 +55,5 @@ namespace DocumentProcessing.Model
             }
             return dictMailSearchCriteria;
         }//GetMailSearchCriteria
-
     }//MailCriteriaModel
 }
