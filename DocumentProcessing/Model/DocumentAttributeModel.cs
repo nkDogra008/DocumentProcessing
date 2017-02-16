@@ -43,7 +43,7 @@ namespace DocumentProcessing.Model
                     while (reader.Read())
                     {
                         attributes = new DocumentAttributes();
-                        attributes.A_Id = reader.GetInt32(reader.GetOrdinal("AId"));
+                        attributes.A_Id = reader.GetInt32(reader.GetOrdinal("Id"));
                         attributes.AttributeName = reader.GetString(reader.GetOrdinal("AttributeName"));
                         listAttributes.Add(attributes);
                     }

@@ -28,10 +28,9 @@ namespace DocumentProcessing.Model
         /// This method returns subject and criteria for filtering mails
         /// </summary>
         /// <returns></returns>
-        public Dictionary<string, string> GetMailSearchCriteria()
+        public Dictionary<string, List<string>> GetMailSearchCriteria()
         {
-            Dictionary<string, string> dictMailSearchCriteria = new Dictionary<string, string>();
-            Dictionary<string, string> dictMetadata = new Dictionary<string, string>();
+            Dictionary<string, List<string>> dictMailSearchCriteria = new Dictionary<string, List<string>>();
             IDataReader reader;
             string key = string.Empty, value = string.Empty;
 
@@ -43,9 +42,13 @@ namespace DocumentProcessing.Model
                 {
                     while (reader.Read())
                     {
-                        key = reader.GetString(reader.GetOrdinal("Criteria"));
-                        value = reader.GetString(reader.GetOrdinal("Subject"));
-                        dictMailSearchCriteria.Add(key, value);
+                        key = reader.GetString(reader.GetOrdinal("Subject"));
+                        value = reader.GetString(reader.GetOrdinal("Criteria"));
+                        if (!dictMailSearchCriteria.ContainsKey(key))
+                            dictMailSearchCriteria.Add(key, new List<string>() { value });
+                        else
+                            dictMailSearchCriteria[key].Add(value);
+
                     }
                 }
             }

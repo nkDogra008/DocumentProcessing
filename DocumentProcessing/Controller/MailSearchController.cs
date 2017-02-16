@@ -38,32 +38,21 @@ namespace DocumentProcessing.Controller
         public MailSearchController()
         {
 
-            Dictionary<string, string> dictSearchMailCriteria = null;
+            Dictionary<string, List<string>> dictSearchMailCriteria = null;
             MailCriteriaController mailCriteriaController = new MailCriteriaController();
             dictSearchMailCriteria = mailCriteriaController.GetMailSearchCriteria();
-            string subject = null;
             string mailSearch = null;
 
             if (dictSearchMailCriteria != null)
-                foreach (KeyValuePair<string, string> keyValue in dictSearchMailCriteria)
+                foreach (KeyValuePair<string, List<string>> keyValue in dictSearchMailCriteria)
                 {
-                    subject = keyValue.Value;
                     mailSearch = keyValue.Key;
-                    //PhraseToSearch = keyValue.Key;
-                    if (subject == "Subject")
-                    {
-                        subjectList.Add(mailSearch);
-                        //subjectList.Add(PhraseToSearch);
-
-                    }
-                    else if (subject == "FromEmail")
-                    {
-                        senderList.Add(mailSearch);
-                        //senderList.Add(PhraseToSearch);
-                    }
-                    else
-                        bodyList.Add(mailSearch);
-                    //bodyList.Add(PhraseToSearch);
+                    if (mailSearch == "Subject")
+                        subjectList = keyValue.Value;
+                    else if (mailSearch == "FromEmail")
+                        senderList = keyValue.Value;
+                    else if (mailSearch == "Body")
+                        bodyList = keyValue.Value;
                 }
         }//MailSearchController
 
@@ -76,15 +65,20 @@ namespace DocumentProcessing.Controller
         public FindItemsResults<Item> MailSearchCriteria(string condition, ExchangeService exchangeService)
         {
             FindItemsResults<Item> searchResult = null;
+            FindItemsResults<Item> filterResult = null;
+
             SearchFilter.ContainsSubstring subjectFilter = null;
             SearchFilter.ContainsSubstring bodyFilter = null;
-            List<SearchFilter> testArraySearchFilter = new List<SearchFilter>();
+            List<SearchFilter> SubjectArraySearchFilter = new List<SearchFilter>();
+            List<SearchFilter> BodyArraySearchFilter = new List<SearchFilter>();
             try
             {
-                DateTime date = DateTime.Now.AddDays(-1);
+                TimeSpan ts = new TimeSpan(0, 0, 0);
+                DateTime date = DateTime.Today.AddDays(-1);
                 SearchFilter.IsGreaterThanOrEqualTo filter = new SearchFilter.IsGreaterThanOrEqualTo(ItemSchema.DateTimeReceived, date);
                 searchResult = exchangeService.FindItems(WellKnownFolderName.Inbox, filter, new ItemView(500));
-                exchangeService.LoadPropertiesForItems(searchResult.Items, new PropertySet(EmailMessageSchema.Sender));
+                if (searchResult.Items.Count > 0)
+                    exchangeService.LoadPropertiesForItems(searchResult.Items, new PropertySet(EmailMessageSchema.Sender));
                 foreach (Item item in searchResult.Items)
                 {
                     string sender = ((EmailMessage)(item)).Sender.Address;
@@ -97,38 +91,39 @@ namespace DocumentProcessing.Controller
                     }
 
                 }
+                searchResult.Items.Clear();
                 //  string mailsearch = PhraseToSearch;
                 //Subject filter criteria
                 //A local variable subjectFilter stores the subject filter pattern passed from the database
                 foreach (string subjectCriteria in subjectList)
                 {
                     subjectFilter = new SearchFilter.ContainsSubstring(ItemSchema.Subject, subjectCriteria, ContainmentMode.Substring, ComparisonMode.IgnoreCase);
-                    testArraySearchFilter.Add(subjectFilter);
-                }
+                    //SubjectArraySearchFilter.Add(subjectFilter);
 
-                //Mail body filter criteria
-                //A local variable bodytFilter stores the body filter pattern passed from the database
-                foreach (string bodyCriteria in bodyList)
-                {
-                    bodyFilter = new SearchFilter.ContainsSubstring(ItemSchema.Body, bodyCriteria, ContainmentMode.Substring, ComparisonMode.IgnoreCase);
-                    testArraySearchFilter.Add(bodyFilter);
+                    //Mail body filter criteria
+                    //A local variable bodytFilter stores the body filter pattern passed from the database
+                    foreach (string bodyCriteria in bodyList)
+                    {
+                        bodyFilter = new SearchFilter.ContainsSubstring(ItemSchema.Body, bodyCriteria, ContainmentMode.Substring, ComparisonMode.IgnoreCase);
+                        //BodyArraySearchFilter.Add(bodyFilter);
+                        //Checks the search condition passed from the xml file
+                        if (Equals(condition, "OR") && (subjectFilter.Value != string.Empty || bodyFilter.Value != string.Empty))
+                        {
+                            //Logical OR condition for pattern search in subject or body is stored in a local variable
+                            SearchFilter.SearchFilterCollection orFilter = new SearchFilter.SearchFilterCollection(LogicalOperator.Or, subjectFilter, bodyFilter);
+                            //The mails satisfying the search criteria are stored in a variable
+                            filterResult = exchangeService.FindItems(WellKnownFolderName.SearchFolders, orFilter, new ItemView(1000));
+                            searchResult.Items.Add(filterResult.Items.All(a => a));
+                        }
+                        else
+                        {
+                            //Logical AND condition for pattern search in subject and body is stored in a local variable
+                            SearchFilter.SearchFilterCollection andFilter = new SearchFilter.SearchFilterCollection(LogicalOperator.And, subjectFilter, bodyFilter);
+                            filterResult = exchangeService.FindItems(WellKnownFolderName.SearchFolders, andFilter, new ItemView(1000));
+                            searchResult.Items.Concat(filterResult.Items);
+                        }
+                    }
                 }
-                //Checks the search condition passed from the xml file
-                if (Equals(condition, "OR") && (subjectFilter.Value != string.Empty || bodyFilter.Value != string.Empty))
-                {
-                    //Logical OR condition for pattern search in subject or body is stored in a local variable
-                    SearchFilter.SearchFilterCollection orFilter = new SearchFilter.SearchFilterCollection(LogicalOperator.Or, testArraySearchFilter.ToArray());
-
-                    //The mails satisfying the search criteria are stored in a variable
-                    searchResult = exchangeService.FindItems(WellKnownFolderName.SearchFolders, orFilter, new ItemView(1000));
-                }
-                else
-                {
-                    //Logical AND condition for pattern search in subject and body is stored in a local variable
-                    SearchFilter.SearchFilterCollection andFilter = new SearchFilter.SearchFilterCollection(LogicalOperator.And, testArraySearchFilter.ToArray());
-                    searchResult = exchangeService.FindItems(WellKnownFolderName.SearchFolders, andFilter, new ItemView(1000));
-                }
-
             }
             catch (Exception ex)
             {
@@ -187,7 +182,7 @@ namespace DocumentProcessing.Controller
             }
 
         }
-        public void OutlookMailSearch(string wordInSubject, outlook.Application app)
+        public void OutlookMailSearch(outlook.Application app)
         {
             string condition = null;
             // outlook.Application app = new outlook.Application();
@@ -221,7 +216,7 @@ namespace DocumentProcessing.Controller
                         else if (condition == "AND" && senderList.Contains(eMail.SenderEmailAddress))
                         {
 
-                            if ((eMail != null && eMail.Subject != null && eMail.Subject.Contains(subjectCriteria)) && eMail.Body.Contains(bodyCriteria))
+                            if ((eMail != null && eMail.Subject != null && eMail.Subject.Contains(subjectCriteria)) && (eMail.Body != null && eMail.Body.Contains(bodyCriteria)))
                             {
                                 DownLoadattachment(eMail);
                             }

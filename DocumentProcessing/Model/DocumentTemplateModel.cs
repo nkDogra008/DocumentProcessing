@@ -50,10 +50,10 @@ namespace DocumentProcessing.Model
                     while (reader.Read())
                     {
                         doctemplate = new DocumentTemplate();
-                        doctemplate.DocTemplateId = reader.GetInt32(reader.GetOrdinal("Id"));
+                        doctemplate.DocTemplateId = reader.GetInt32(reader.GetOrdinal("TemplateId"));
                         doctemplate.OcrTypeId = (Common.OcrType)reader.GetInt32(reader.GetOrdinal("OcrId"));
-                        // doctemplate.DocTypeId = reader.GetInt32(reader.GetOrdinal("MetadataTypeId"));
-                        //  doctemplate.A_Id = reader.GetInt32(reader.GetOrdinal("AId"));
+                        //doctemplate.DocTypeId = reader.GetInt32(reader.GetOrdinal("MetadataTypeId"));
+                        //doctemplate.A_Id = reader.GetInt32(reader.GetOrdinal("Id"));
                         doctemplate.LineNo = reader.GetInt32(reader.GetOrdinal("LineNumber"));
                         listDocTemplate.Add(doctemplate);
                     }

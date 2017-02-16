@@ -31,16 +31,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AbbyyOnlineSdk">
-      <HintPath>..\..\..\Users\narender\Downloads\dotNet (5)\ConsoleTest\bin\Debug\AbbyyOnlineSdk.dll</HintPath>
+      <HintPath>bin\Debug\AbbyyOnlineSdk.dll</HintPath>
     </Reference>
     <Reference Include="asprise-ocr-api">
-      <HintPath>..\..\..\New folder\Visual Studio 2015\Projects\TestApp\OCR Testing\bin\Debug\asprise-ocr-api.dll</HintPath>
+      <HintPath>bin\Debug\asprise-ocr-api.dll</HintPath>
     </Reference>
     <Reference Include="asprise-ocr-dll-bundle-32">
-      <HintPath>..\..\..\New folder\Visual Studio 2015\Projects\TestApp\OCR Testing\bin\Debug\asprise-ocr-dll-bundle-32.dll</HintPath>
+      <HintPath>bin\Debug\asprise-ocr-dll-bundle-32.dll</HintPath>
     </Reference>
     <Reference Include="asprise-ocr-dll-bundle-64">
-      <HintPath>..\..\..\New folder\Visual Studio 2015\Projects\TestApp\OCR Testing\bin\Debug\asprise-ocr-dll-bundle-64.dll</HintPath>
+      <HintPath>bin\Debug\asprise-ocr-dll-bundle-64.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Exchange.WebServices, Version=15.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Exchange.WebServices.2.2\lib\40\Microsoft.Exchange.WebServices.dll</HintPath>
@@ -59,7 +59,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="NDesk.Options">
-      <HintPath>..\..\..\Users\narender\Downloads\dotNet (5)\ConsoleTest\bin\Debug\NDesk.Options.dll</HintPath>
+      <HintPath>bin\Debug\NDesk.Options.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

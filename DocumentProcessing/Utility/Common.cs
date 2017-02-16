@@ -52,6 +52,18 @@ namespace DocumentProcessing.Utility
 
         }//OcrTypes
 
+        public enum SupportedDocumentType
+        {
+            // Can be used if no performance is available to compare
+
+            Pan = 1,
+            Invoice,
+            Passport,
+            KYC
+
+
+        }//OcrTypes
+
         /// <summary>
         /// Gets and sets Unique Id depending upon the type of document(eg. Invoice,Passport etc)
         /// </summary>

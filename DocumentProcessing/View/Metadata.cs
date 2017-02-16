@@ -32,7 +32,7 @@ namespace DocumentProcessing.View
         public string Type { get; set; }
 
         /// <summary>
-        /// Gets and sets document format
+        /// Gets and sets supported document format
         /// </summary>
         public string Format { get; set; }
 

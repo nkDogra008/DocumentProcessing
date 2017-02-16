@@ -26,7 +26,6 @@ namespace DocumentProcessing.Model
         /// <summary>
         /// This method returns all rows from Metadata table
         /// </summary>
-        /// <param name="MetadataTypeId"></param>Unique Id for each document type
         /// <returns></returns>
         public List<Metadata> GetAllMetadataDetails()
         {

@@ -26,9 +26,9 @@ namespace DocumentProcessing.Controller
         /// This method gets Mail Search Criteria Details
         /// </summary>
         /// <returns></returns>
-        public Dictionary<string, string> GetMailSearchCriteria()
+        public Dictionary<string, List<string>> GetMailSearchCriteria()
         {
-            Dictionary<string, string> dictMailSearchCriteria = null;
+            Dictionary<string, List<string>> dictMailSearchCriteria = null;
 
             try
             {

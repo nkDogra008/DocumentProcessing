@@ -7,11 +7,14 @@ using System.Threading.Tasks;
 
 namespace DocumentProcessing.View
 {
+    /// <summary>
+    /// To get or set template details for the documents 
+    /// </summary>
     public class DocumentTemplate
     {
 
         /// <summary>
-        /// To get or set template details for the documents 
+        /// Default Constructor
         /// </summary>
         public DocumentTemplate()
         {

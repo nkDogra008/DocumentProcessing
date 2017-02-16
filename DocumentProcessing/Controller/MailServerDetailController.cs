@@ -157,11 +157,10 @@ namespace DocumentProcessing.Controller
         {
             MailSearchController mailSearchController = new MailSearchController();
             //mailSearchController.PhraseToSearch = _phraseToSearch;
+            //Creates an instance of ExchangeService
+            ExchangeService exchangeService = new ExchangeService(ExchangeVersion.Exchange2010_SP1);
             try
             {
-                //Creates an instance of ExchangeService
-                ExchangeService exchangeService = new ExchangeService(ExchangeVersion.Exchange2010_SP1);
-
                 //Provides the credentials to the Exchange Server for Login
                 exchangeService.Credentials = new WebCredentials(GetMailServerDetails.Username, GetMailServerDetails.Password,
                     GetMailServerDetails.Domain);
@@ -229,6 +228,8 @@ namespace DocumentProcessing.Controller
             {
                 Log.FileLog(Common.LogType.Error, ex.ToString());
             }
+            Folder folder = Folder.Bind(exchangeService, WellKnownFolderName.SearchFolders);
+            folder.Empty(DeleteMode.HardDelete, true);
         }
 
         /// <summary>
@@ -239,7 +240,7 @@ namespace DocumentProcessing.Controller
             try
             {
                 MailSearchController mailSearchController = new MailSearchController();
-                mailSearchController.PhraseToSearch = _phraseToSearch;
+                //mailSearchController.PhraseToSearch = _phraseToSearch;
 
                 //Uses the GetApplicationObject method to login into Outlook
                 GetApplicationObject();
@@ -251,7 +252,7 @@ namespace DocumentProcessing.Controller
                 Outlook.Folder selectedFolder = application.Session.DefaultStore.GetRootFolder() as Outlook.Folder;
 
 
-                mailSearchController.OutlookMailSearch(_phraseToSearch, application);
+                mailSearchController.OutlookMailSearch(application);
 
 
                 //Closes the Outlook

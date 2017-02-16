@@ -20,7 +20,7 @@ namespace DocumentProcessing.Ocr.DataExtraction
         private Common.OcrType _typeOfOcr;
         private int attributeId;
         private string type;
-      
+
         /// <summary>
         /// 
         /// </summary>
@@ -82,21 +82,22 @@ namespace DocumentProcessing.Ocr.DataExtraction
 
                     foreach (FileInfo file in filesInDirectory)
                     {
-                        foreach (Metadata metadata in metadataList)
-                        {
-                            if (file.Name.Contains(metadata.Type))
-                            {
-                                type = metadata.Type;
-                                attributeId = metadata.AttributeId;
-                            }
-                        }
-
-                        int lineNo = 1;
-                        dicExtractedData = new Dictionary<string, string>();
-                        dicExtractedTemplateData = new Dictionary<string, string>();
-                       
                         if (file.Name.Contains(ocrType.ToString()))
                         {
+                            foreach (Metadata metadata in metadataList)
+                            {
+                                if (file.Name.Contains(metadata.Type))
+                                {
+                                    type = metadata.Type;
+                                    attributeId = metadata.AttributeId;
+                                }
+                            }
+
+                            int lineNo = 1;
+                            dicExtractedData = new Dictionary<string, string>();
+                            dicExtractedTemplateData = new Dictionary<string, string>();
+
+
                             fileStream = file.OpenRead();
                             using (var streamReader = new StreamReader(fileStream))
                             {
@@ -113,7 +114,7 @@ namespace DocumentProcessing.Ocr.DataExtraction
                                         //}
                                         // If the document type have Legends present in it.
                                         // Example there is attribute present on document
-                                        if (!file.Name.Contains("PAN"))
+                                        if ((type.ToLower() != Common.SupportedDocumentType.Pan.ToString().ToString()))
                                         {
                                             attributeList = attributeController.GetAttributesById(attributeId);
                                             /*

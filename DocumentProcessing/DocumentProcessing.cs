@@ -11,6 +11,7 @@ using Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 using DocumentProcessing.View;
 using DocumentProcessing.Ocr.DataExtraction;
+using System.IO;
 
 namespace DocumentProcessing.DocumentProcess
 {
@@ -38,6 +39,10 @@ namespace DocumentProcessing.DocumentProcess
         public void StartDocumentProcessing()
         {
             // Setting log path for testing purpose
+            bool exists = Directory.Exists(_logFilePath);
+
+            if (!exists)
+                Directory.CreateDirectory(_logFilePath);
             Log.LogFilePath = _logFilePath;
             
             try
