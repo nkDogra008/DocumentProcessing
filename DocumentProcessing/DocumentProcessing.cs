@@ -107,7 +107,7 @@ namespace DocumentProcessing.DocumentProcess
                 Log.FileLog(Common.LogType.Error, ex.ToString());
             }
 
-        }
+        }//StartDocumentProcessing
 
         /// <summary>
         /// 
@@ -132,7 +132,6 @@ namespace DocumentProcessing.DocumentProcess
             }
             catch (Exception ex)
             {
-
                 Log.FileLog(Common.LogType.Error,ex.ToString());
             }
 
@@ -164,7 +163,7 @@ namespace DocumentProcessing.DocumentProcess
             }
             catch (Exception ex)
             {
-                //Log error
+                Log.FileLog(Common.LogType.Error, ex.ToString());
             }
 
 
@@ -186,12 +185,11 @@ namespace DocumentProcessing.DocumentProcess
             }
             catch (Exception ex)
             {
-                //Log error
-
+                Log.FileLog(Common.LogType.Error, ex.ToString());
             }
             return listDictExtractedData;
 
-        }
+        }//ExtractDataFromFile
 
         /// <summary>
         /// 
@@ -237,7 +235,7 @@ namespace DocumentProcessing.DocumentProcess
             Marshal.ReleaseComObject(excel);
             Marshal.CleanupUnusedObjectsInCurrentContext();
 
-        }
+        }//SaveOutputResult
 
     }//DocumentProcessing
 }//DocumentProcessing

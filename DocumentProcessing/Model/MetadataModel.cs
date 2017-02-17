@@ -47,12 +47,14 @@ namespace DocumentProcessing.Model
                         metadata.MetadataTypeId = reader.GetInt32(reader.GetOrdinal("MetadataTypeId"));
                         metadata.AttributeId = reader.GetInt32(reader.GetOrdinal("AttributeId"));
                         listMetadata.Add(metadata);
+                        
                     }
                 }
+                Log.FileLog(Common.LogType.Success, "Metadata details fetched successfully");
             }
             catch (Exception ex)
             {
-                Log.FileLog(Common.LogType.Error, ex.ToString());
+               Log.FileLog(Common.LogType.Error, ex.ToString());
             }
             return listMetadata;
         }//GetAllMetadataDetails       

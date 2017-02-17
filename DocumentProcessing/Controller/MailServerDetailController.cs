@@ -18,7 +18,7 @@ namespace DocumentProcessing.Controller
     /// </summary>
     public class MailServerDetailController
     {
-        private MailServerDetail GetMailServerDetails { get; set; }
+        public MailServerDetail GetMailServerDetails { get; set; }
         private MailSearch GetMailSearchDetails { get; set; }
         private MailCriteria GetMailCriteria { get; set; }
         private string _mailSearchCondition = string.Empty;
@@ -33,10 +33,10 @@ namespace DocumentProcessing.Controller
         /// <summary>
         /// Default Constructor
         /// </summary>
-        public MailServerDetailController()
-        {
+        //public MailServerDetailController()
+        //{
 
-        }//MailServerDetailController
+        //}//MailServerDetailController
 
         /// <summary>
         /// This method controls the mail server details
@@ -169,18 +169,17 @@ namespace DocumentProcessing.Controller
                 exchangeService.Url = new Uri(GetMailServerDetails.MailboxServer);
 
                 //Class Mail search criteria is called and the returned value is stored in a variable
-                FindItemsResults<Item> findResults = mailSearchController.MailSearchCriteria(_mailSearchCondition, exchangeService);
+                FindItemsResults<Item> findResults = mailSearchController.MailSearchCriteria2(_mailSearchCondition, exchangeService);
 
                 MetadataController metadataController = new MetadataController();
                 List<Metadata> metadataList = metadataController.GetAllMetadataDetails();
-                foreach (Metadata metadata in metadataList)
+                //Loops for all mails in the variable 
+                foreach (Item item in findResults)
                 {
-                    type = metadata.Type;
-                    format = metadata.Format;
-
-                    //Loops for all mails in the variable 
-                    foreach (Item item in findResults)
+                    foreach (Metadata metadata in metadataList)
                     {
+                        type = metadata.Type;
+                        format = metadata.Format;
 
                         EmailMessage message = EmailMessage.Bind(exchangeService, item.Id);
 
@@ -196,15 +195,15 @@ namespace DocumentProcessing.Controller
                                 string fileName = attachment.Name;
                                 //The extensions extracted from the attachment name and stored in a variable
                                 var fileExtension = attachment.Name.Split('.')[1];
-                                if (fileName.Contains(type))
+                                if (fileName.ToLower().Contains(type.ToLower()))
                                 {
-                                    string supportedFormats = metadataList.Find(a => a.Type == type).Format;
+                                    string supportedFormats = metadataList.Find(a => a.Type.ToLower() == type.ToLower()).Format;
                                     string[] arrayExtensions = supportedFormats.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                                     //Checks the extension type
                                     // Check dynamically
                                     //if (extension == format[0] || extension == format[1] || extension == format[2] ||
                                     //    extension == format[3] || extension == format[4] || extension == format[5])
-                                    arrayExtensions = arrayExtensions.Select(a => a.Trim()).ToArray();
+                                    arrayExtensions = arrayExtensions.Select(a => a.Replace('.', ' ').Trim()).ToArray();
                                     if (arrayExtensions.Contains(fileExtension))
                                     {
                                         //Stores the attachment in a variable
@@ -252,7 +251,7 @@ namespace DocumentProcessing.Controller
                 Outlook.Folder selectedFolder = application.Session.DefaultStore.GetRootFolder() as Outlook.Folder;
 
 
-                mailSearchController.OutlookMailSearch(application);
+                mailSearchController.OutlookMailSearch(application, _saveAttachmentPath);
 
 
                 //Closes the Outlook

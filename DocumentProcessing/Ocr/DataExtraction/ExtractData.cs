@@ -82,11 +82,11 @@ namespace DocumentProcessing.Ocr.DataExtraction
 
                     foreach (FileInfo file in filesInDirectory)
                     {
-                        if (file.Name.Contains(ocrType.ToString()))
+                        if (file.Name.ToLower().Contains(ocrType.ToString().ToLower()))
                         {
                             foreach (Metadata metadata in metadataList)
                             {
-                                if (file.Name.Contains(metadata.Type))
+                                if (file.Name.ToLower().Contains(metadata.Type.ToLower()))
                                 {
                                     type = metadata.Type;
                                     attributeId = metadata.AttributeId;
@@ -114,7 +114,7 @@ namespace DocumentProcessing.Ocr.DataExtraction
                                         //}
                                         // If the document type have Legends present in it.
                                         // Example there is attribute present on document
-                                        if ((type.ToLower() != Common.SupportedDocumentType.Pan.ToString().ToString()))
+                                        if ((type.ToLower() != Common.SupportedDocumentType.Pan.ToString().ToLower()))
                                         {
                                             attributeList = attributeController.GetAttributesById(attributeId);
                                             /*
@@ -124,7 +124,7 @@ namespace DocumentProcessing.Ocr.DataExtraction
                                             foreach (DocumentAttributes docAttribute in attributeList)
                                             {
                                                 var attribute = docAttribute.AttributeName;
-                                                if (eachLineInFile.Contains(attribute))
+                                                if (eachLineInFile.ToLower().Contains(attribute.ToLower()))
                                                 {
                                                     eachLineInFile = eachLineInFile.Replace(attribute, string.Empty).Trim();
                                                     // We can add logic to replace special characters from line
@@ -207,11 +207,10 @@ namespace DocumentProcessing.Ocr.DataExtraction
             {
                 // Log error here
                 Log.FileLog(Common.LogType.Error, ex.ToString());
-
             }
             return returnedData;
 
-        }
+        }//GetData
 
         /// <summary>
         /// 
@@ -238,6 +237,6 @@ namespace DocumentProcessing.Ocr.DataExtraction
             {
                 Log.FileLog(Common.LogType.Error, ex.ToString());
             }
-        }
+        }//ExtractDataUsingDocTemplate
     }//ExtractData
 }

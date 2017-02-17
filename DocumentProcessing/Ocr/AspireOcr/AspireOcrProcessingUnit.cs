@@ -64,15 +64,17 @@ namespace DocumentProcessing.Ocr.AspireOcr
                 {
 
                     string fileName = file.Name.Split('.')[0];
-                    extractedData = aspireOcr.Recognize(file.FullName, -1, -1, -1, -1, -1, AspriseOCR.RECOGNIZE_TYPE_TEXT, AspriseOCR.OUTPUT_FORMAT_PLAINTEXT);
-                    using (StreamWriter sw = File.AppendText(_fileTargetPath + fileName + "_Aspire_File_" + Guid.NewGuid() + ".txt"))
+                    extractedData = aspireOcr.Recognize(file.FullName, -1, -1, -1, -1, -1, AspriseOCR.RECOGNIZE_TYPE_ALL, AspriseOCR.OUTPUT_FORMAT_PLAINTEXT);
+                    if (null != extractedData && extractedData.Trim().Length > 0)
                     {
-                        // For setting new line character
-                        extractedData = extractedData.Replace("\n", Environment.NewLine);
-                        sw.WriteLine(extractedData);
-                        sw.Close();
+                        using (StreamWriter sw = File.AppendText(_fileTargetPath + fileName + "_Aspire_File_" + Guid.NewGuid() + ".txt"))
+                        {
+                            // For setting new line character
+                            extractedData = extractedData.Replace("\n", Environment.NewLine);
+                            sw.WriteLine(extractedData);
+                            sw.Close();
+                        }
                     }
-
                 }
 
             }

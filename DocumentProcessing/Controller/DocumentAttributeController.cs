@@ -37,6 +37,8 @@ namespace DocumentProcessing.Controller
                     DocumentAttributeModel attributeModel = new DocumentAttributeModel();
                     documentAttributes = attributeModel.GetAttributesById(AttributeId);
                 }
+                else
+                    Log.FileLog(Common.LogType.ApplicationError, "Unable to find any records for Attribute Id : " + AttributeId);
             }
             catch (Exception ex)
             {

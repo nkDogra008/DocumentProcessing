@@ -119,12 +119,15 @@
   </resheader>
   <data name="ApplicationErrorMessage" xml:space="preserve">
     <value>Application Error</value>
+    <comment>Used to show application error</comment>
   </data>
   <data name="DateFormat" xml:space="preserve">
     <value>yyyyMMdd</value>
+    <comment>Used for date format</comment>
   </data>
   <data name="Endline" xml:space="preserve">
     <value>------------------------------------------------------------</value>
+    <comment>Represents endline</comment>
   </data>
   <data name="ErrorDetailsSeperator" xml:space="preserve">
     <value>↨</value>
@@ -132,17 +135,22 @@
   </data>
   <data name="ErrorLineNo" xml:space="preserve">
     <value>Error Line No.:</value>
+    <comment>Used to print error line number</comment>
   </data>
   <data name="Extention" xml:space="preserve">
     <value>.txt</value>
+    <comment>Takes .txt extension</comment>
   </data>
   <data name="InitialFileName" xml:space="preserve">
     <value>LogFile_</value>
+    <comment>Used for append File Name</comment>
   </data>
   <data name="LogMessageDetails" xml:space="preserve">
     <value>Message Details:</value>
+    <comment>Print as Message Details:</comment>
   </data>
   <data name="StringSeparator" xml:space="preserve">
     <value>:</value>
+    <comment>Used as string separator</comment>
   </data>
 </root>

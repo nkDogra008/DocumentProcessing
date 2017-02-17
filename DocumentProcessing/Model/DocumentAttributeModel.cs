@@ -48,6 +48,7 @@ namespace DocumentProcessing.Model
                         listAttributes.Add(attributes);
                     }
                 }
+                Log.FileLog(Common.LogType.Success, "Attribute details fetched successfully for Attribute Id: " + AttributeId);
             }
             //Error Handling
             catch (Exception ex)

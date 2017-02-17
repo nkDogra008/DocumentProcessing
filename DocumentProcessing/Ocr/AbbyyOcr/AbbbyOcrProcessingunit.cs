@@ -13,6 +13,9 @@ using System.Threading;
 
 namespace DocumentProcessing.Ocr.AbbyyOcr
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public enum ProcessingModeEnum
     {
         SinglePage,
@@ -22,6 +25,9 @@ namespace DocumentProcessing.Ocr.AbbyyOcr
         ProcessMrz,
     };
 
+    /// <summary>
+    /// 
+    /// </summary>
     class AbbbyOcrProcessingunit
     {
         private RestServiceClient restClient;
@@ -30,6 +36,14 @@ namespace DocumentProcessing.Ocr.AbbyyOcr
         private string _fileTargetPath;
         private string _fileProcessedPath;
         private string _fileErrorPath;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sourcePath"></param>
+        /// <param name="targetPath"></param>
+        /// <param name="processedFilesPath"></param>
+        /// <param name="errorFilePath"></param>
         public AbbbyOcrProcessingunit(string sourcePath, string targetPath, string processedFilesPath, string errorFilePath)
         {
             //checking the required folders present or not if not create
@@ -70,9 +84,9 @@ namespace DocumentProcessing.Ocr.AbbyyOcr
 
 
                 // Name of application you created
-                restClient.ApplicationId = "SCAN Reader";
+                restClient.ApplicationId = "DocumentProcessingV1";
                 // Password should be sent to your e-mail after application was created
-                restClient.Password = "wm04hzKHTly9cXGyJV8WiLy8";
+                restClient.Password = "YBCaIgrTFg+t9DlgouIhLCWc";
 
 
                 // Display hint to provide credentials
@@ -86,8 +100,8 @@ namespace DocumentProcessing.Ocr.AbbyyOcr
             }
             else
             {
-                // Log error that source path and target path not set 
-
+                // Log error
+                Log.FileLog(Common.LogType.Error, "Source path and target path not set.");
             }
         }
 
@@ -133,6 +147,7 @@ namespace DocumentProcessing.Ocr.AbbyyOcr
                 {
                     Console.WriteLine("Invalid arguments.");
                     //Log error
+                    Log.FileLog(Common.LogType.Error, "Invalid arguments.");
                     return;
                 }
 
@@ -152,7 +167,8 @@ namespace DocumentProcessing.Ocr.AbbyyOcr
                         case ProcessingModeEnum.ProcessMrz:
                             if (additionalArgs.Count != 2)
                             {
-                                //Log error
+                                // Log error 
+                                Log.FileLog(Common.LogType.Error, "");
                                 return;
                             }
 
@@ -164,6 +180,7 @@ namespace DocumentProcessing.Ocr.AbbyyOcr
                             if (additionalArgs.Count != 3)
                             {
                                 // Log error 
+                                Log.FileLog(Common.LogType.Error, "");
                                 return;
                             }
 
@@ -224,9 +241,10 @@ namespace DocumentProcessing.Ocr.AbbyyOcr
             }
             catch (Exception e)
             {
-                // Log error 
                 Console.WriteLine("Error: ");
                 Console.WriteLine(e.Message);
+                // Log error 
+                Log.FileLog(Common.LogType.Error, "Error: "+e.Message);
             }
 
         }//StartProcess
@@ -257,6 +275,7 @@ namespace DocumentProcessing.Ocr.AbbyyOcr
             else
             {
                 Console.WriteLine("Invalid source path");
+                Log.FileLog(Common.LogType.Error, "Invalid source path.");
                 return;
             }
 
@@ -314,8 +333,14 @@ namespace DocumentProcessing.Ocr.AbbyyOcr
                     ProcessMrz(filePath, outputFilePath);
                 }
             }
-        }
+        }//ProcessPath
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sourceFilePath"></param>
+        /// <param name="outputFileBase"></param>
+        /// <param name="settings"></param>
         public void ProcessFile(string sourceFilePath, string outputFileBase, ProcessingSettings settings)
         {
             Console.WriteLine("Uploading..");
@@ -341,9 +366,16 @@ namespace DocumentProcessing.Ocr.AbbyyOcr
             else
             {
                 Console.WriteLine("Error while processing the task");
+                Log.FileLog(Common.LogType.Error, "Error while processing the task");
             }
-        }
+        }//ProcessFile
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_sourceFiles"></param>
+        /// <param name="outputFileBase"></param>
+        /// <param name="settings"></param>
         public void ProcessDocument(IEnumerable<string> _sourceFiles, string outputFileBase,
             ProcessingSettings settings)
         {
@@ -380,8 +412,9 @@ namespace DocumentProcessing.Ocr.AbbyyOcr
             else
             {
                 Console.WriteLine("Error while processing the task");
+                Log.FileLog(Common.LogType.Error, "Error while processing the task");
             }
-        }
+        }//ProcessDocument
 
         /// <summary>
         /// Wait until task finishes and download result
@@ -399,9 +432,15 @@ namespace DocumentProcessing.Ocr.AbbyyOcr
             else
             {
                 Console.WriteLine("Error while processing the task");
+                Log.FileLog(Common.LogType.Error, "Error while processing the task");
             }
-        }
+        }//waitAndDownload
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="task"></param>
+        /// <returns></returns>
         private OcrSdkTask waitForTask(OcrSdkTask task)
         {
             Console.WriteLine(String.Format("Task status: {0}", task.Status));
@@ -419,16 +458,28 @@ namespace DocumentProcessing.Ocr.AbbyyOcr
                 Console.WriteLine(String.Format("Task status: {0}", task.Status));
             }
             return task;
-        }
+        }//waitForTask
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sourceFilePath"></param>
+        /// <param name="outputFilePath"></param>
+        /// <param name="settings"></param>
         public void ProcessTextField(string sourceFilePath, string outputFilePath, TextFieldProcessingSettings settings)
         {
             Console.WriteLine("Uploading..");
             OcrSdkTask task = restClient.ProcessTextField(sourceFilePath, settings);
 
             waitAndDownload(task, outputFilePath);
-        }
+        }//ProcessTextField
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sourceFilePath"></param>
+        /// <param name="xmlSettingsPath"></param>
+        /// <param name="outputFilePath"></param>
         public void ProcessFields(string sourceFilePath, string xmlSettingsPath, string outputFilePath)
         {
             Console.WriteLine("Uploading");
@@ -437,8 +488,13 @@ namespace DocumentProcessing.Ocr.AbbyyOcr
             task = restClient.ProcessFields(task, xmlSettingsPath);
 
             waitAndDownload(task, outputFilePath);
-        }
+        }//ProcessFields
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sourceFilePath"></param>
+        /// <param name="outputFilePath"></param>
         public void ProcessMrz(string sourceFilePath, string outputFilePath)
         {
             Console.WriteLine("Uploading");
@@ -446,15 +502,29 @@ namespace DocumentProcessing.Ocr.AbbyyOcr
             Console.WriteLine("Processing..");
 
             waitAndDownload(task, outputFilePath);
-        }
+        }//ProcessMrz
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="language"></param>
+        /// <param name="customOptions"></param>
+        /// <returns></returns>
         private static TextFieldProcessingSettings buildTextFieldSettings(string language, string customOptions)
         {
             TextFieldProcessingSettings settings = new TextFieldProcessingSettings();
             settings.Language = language;
             settings.CustomOptions = customOptions;
             return settings;
-        }
+        }//buildTextFieldSettings
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="language"></param>
+        /// <param name="outputFormat"></param>
+        /// <param name="profile"></param>
+        /// <returns></returns>
         private static ProcessingSettings buildSettings(string language,
     string outputFormat, string profile)
         {
@@ -492,7 +562,7 @@ namespace DocumentProcessing.Ocr.AbbyyOcr
             }
 
             return settings;
-        }
+        }//buildSettings
 
-    }
+    }//AbbyyProcessingUnit
 }

@@ -58,7 +58,9 @@ namespace DocumentProcessing.Utility
             else
                 log.WriteLine(logType + Properties.Resources.StringSeparator +
                     Properties.Resources.ApplicationErrorMessage + msg);
-            log.WriteLine(Properties.Resources.Endline);
+            log.WriteLine();
+            log.WriteLine(Properties.Resources.Endline+Properties.Resources.ErrorDetailsSeperator+DateTime.Now);
+            log.WriteLine();
             log.Close();
         }//FileLog
         /// <summary>
