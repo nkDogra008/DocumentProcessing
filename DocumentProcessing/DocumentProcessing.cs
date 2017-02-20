@@ -217,7 +217,7 @@ namespace DocumentProcessing.DocumentProcess
             if (!ifExists)
             {
                 //string projectPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
-                //string folderName = Path.Combine(projectPath, _outputFilepath);
+                //string folderName = Path.Combine(projectPath, _outputFilePath);
                 Directory.CreateDirectory(_outputFilePath);
             }
             FileInfo file = new FileInfo(filepath);
