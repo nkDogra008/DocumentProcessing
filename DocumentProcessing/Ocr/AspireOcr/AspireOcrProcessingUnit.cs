@@ -73,9 +73,13 @@ namespace DocumentProcessing.Ocr.AspireOcr
                             extractedData = extractedData.Replace("\n", Environment.NewLine);
                             sw.WriteLine(extractedData);
                             sw.Close();
+                            Log.FileLog(Common.LogType.Success, "Aspire Process Completed for : " + file);
                         }
+                        
                     }
+
                 }
+                Log.FileLog(Common.LogType.Success,"Aspire process completed for all valid attachments");
 
             }
             catch (Exception ex)

@@ -34,6 +34,7 @@ namespace DocumentProcessing.Controller
                     MetadataModel metadataModel = new MetadataModel();
                     listMetadata = metadataModel.GetAllMetadataDetails();               
             }
+            //Error handling
             catch (Exception ex)
             {
                 Log.FileLog(Common.LogType.Error, ex.ToString());

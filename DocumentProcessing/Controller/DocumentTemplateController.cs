@@ -34,6 +34,8 @@ namespace DocumentProcessing.Controller
                     DocumentTemplateModel documentTemplateModel = new DocumentTemplateModel();
                     docTemplateList=documentTemplateModel.GetDocTemplateByType(ocrType);
                 }
+                else
+                    Log.FileLog(Common.LogType.ApplicationError, "Unable to find any records for Ocr Id: " + ocrType);
             }
             catch (Exception ex)
             {

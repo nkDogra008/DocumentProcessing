@@ -54,93 +54,12 @@ namespace DocumentProcessing.Controller
                 }
         }//MailSearchController
 
-        /// <summary>/// Class for mail search criteria which dynamically
-        ///  takes the search pattern from the database 
+              
+        /// <summary>
+        /// Method downloads the attachment from Outlook
         /// </summary>
-        /// <param name="condition">The search condition is passed from the xml file</param>
-        /// <param name="exchangeService">The exchange service class is passed from the main program</param>
-        /// <returns></returns>
-        public FindItemsResults<Item> MailSearchCriteria(string condition, ExchangeService exchangeService)
-        {
-            FindItemsResults<Item> searchResult = null;
-            FindItemsResults<Item> filterResult = null;
-
-            SearchFilter.ContainsSubstring subjectFilter = null;
-            SearchFilter.ContainsSubstring bodyFilter = null;
-            List<SearchFilter> SubjectArraySearchFilter = new List<SearchFilter>();
-            List<SearchFilter> BodyArraySearchFilter = new List<SearchFilter>();
-            try
-            {
-                TimeSpan ts = new TimeSpan(0, 0, 0);
-                DateTime date = DateTime.Today.AddDays(-1);
-                SearchFilter.IsGreaterThanOrEqualTo filter = new SearchFilter.IsGreaterThanOrEqualTo(ItemSchema.DateTimeReceived, date);
-                searchResult = exchangeService.FindItems(WellKnownFolderName.Inbox, filter, new ItemView(500));
-
-                if (searchResult.Items.Count > 0)
-                    exchangeService.LoadPropertiesForItems(searchResult.Items, new PropertySet(EmailMessageSchema.Sender));
-                foreach (Item item in searchResult.Items)
-                {
-
-                    string sender = ((EmailMessage)(item)).Sender.Address;
-                    foreach (string senderName in senderList)
-                    {
-                        if (senderName == sender)
-                        {
-                            item.Copy(WellKnownFolderName.SearchFolders);
-                        }
-                    }
-
-                }
-                searchResult.Items.Clear();
-                //  string mailsearch = PhraseToSearch;
-                //Subject filter criteria
-                //A local variable subjectFilter stores the subject filter pattern passed from the database
-                foreach (string subjectCriteria in subjectList)
-                {
-                    subjectFilter = new SearchFilter.ContainsSubstring(ItemSchema.Subject, subjectCriteria, ContainmentMode.Substring, ComparisonMode.IgnoreCase);
-                    //SubjectArraySearchFilter.Add(subjectFilter);
-
-                    //Mail body filter criteria
-                    //A local variable bodytFilter stores the body filter pattern passed from the database
-                    foreach (string bodyCriteria in bodyList)
-                    {
-                        bodyFilter = new SearchFilter.ContainsSubstring(ItemSchema.Body, bodyCriteria, ContainmentMode.Substring, ComparisonMode.IgnoreCase);
-                        //BodyArraySearchFilter.Add(bodyFilter);
-                        //Checks the search condition passed from the xml file
-                        if (Equals(condition, "OR") && (subjectFilter.Value != string.Empty || bodyFilter.Value != string.Empty))
-                        {
-                            //Logical OR condition for pattern search in subject or body is stored in a local variable
-                            SearchFilter.SearchFilterCollection orFilter = new SearchFilter.SearchFilterCollection(LogicalOperator.Or, subjectFilter, bodyFilter);
-                            //The mails satisfying the search criteria are stored in a variable
-                            filterResult = exchangeService.FindItems(WellKnownFolderName.SearchFolders, orFilter, new ItemView(1000));
-                            foreach (var item in filterResult.Items)
-                            {
-                                if (searchResult.Items.Where(a => a.Id == item.Id).Count() <= 0)
-                                    searchResult.Items.Add(item);
-                            }
-                        }
-                        else
-                        {
-                            //Logical AND condition for pattern search in subject and body is stored in a local variable
-                            SearchFilter.SearchFilterCollection andFilter = new SearchFilter.SearchFilterCollection(LogicalOperator.And, subjectFilter, bodyFilter);
-                            filterResult = exchangeService.FindItems(WellKnownFolderName.SearchFolders, andFilter, new ItemView(1000));
-                            foreach (var item in filterResult.Items)
-                            {
-                                if (searchResult.Items.Where(a => a.Id == item.Id).Count() <= 0)
-                                    searchResult.Items.Add(item);
-                            }
-                        }
-                    }
-                }
-
-            }
-            catch (Exception ex)
-            {
-                Log.FileLog(Common.LogType.Error, ex.ToString());
-            }
-            return searchResult;
-        }
-
+        /// <param name="eMail">Mail from which attachment is to be downloaded</param>
+        /// <param name="attachmentSavePath">Path to save the Attachment</param>
         private void DownLoadattachment(outlook.MailItem eMail, string attachmentSavePath)
         {
             MetadataController metadataController = new MetadataController();
@@ -170,10 +89,11 @@ namespace DocumentProcessing.Controller
                         if (attachments.Count != 0)
                         {
                             //Loops through each attachment of the mail
-                            for (int i = 1; i < attachments.Count; i++)
+                            for (int i = 1; i <= attachments.Count; i++)
                             {
                                 string fileName = attachments[i].FileName;
-                                string fileExtension = fileName.Split('.')[1];
+                                var arrFileDetails = fileName.Split('.');
+                                string fileExtension = arrFileDetails[arrFileDetails.Length - 1];
                                 //Checks for the extension in the attachments
                                 extensionString = extensionString.Select(a => a.Replace('.', ' ').Trim().ToLower()).ToArray();
                                 if (extensionString.Contains(fileExtension) && fileName.ToLower().Contains(type.ToLower()))
@@ -192,70 +112,14 @@ namespace DocumentProcessing.Controller
             }
         }
 
-
-        public void OutlookMailSearch(outlook.Application app, string attachmentPath)
-        {
-
-            try
-            {
-
-                string condition = null;
-                // outlook.Application app = new outlook.Application();
-                string scope = "Inbox";
-                outlook.NameSpace outlookNamespace = app.GetNamespace("MAPI");
-                outlook.MAPIFolder folderInbox = outlookNamespace.GetDefaultFolder(outlook.OlDefaultFolders.olFolderInbox);
-                scope = "\'" + folderInbox.FolderPath + "\'";
-
-                XmlDocument reader = new XmlDocument();
-                reader.Load(@"D:\Project\SettingFile\Settings.xml");
-                if (!string.IsNullOrEmpty(reader.GetElementsByTagName("searchcondition")[0].InnerText))
-                    condition = reader.GetElementsByTagName("searchcondition")[0].InnerText;
-
-                DateTime date = DateTime.Today;
-
-                outlook.Items items = folderInbox.Items;
-                foreach (outlook.MailItem eMail in items.Restrict("[ReceivedTime] > '" + date.ToString("MM/dd/yyyy HH:mm") + "'"))
-                {
-                    string senderEmailAdd = string.Empty;
-                    outlook.AddressEntry sender = eMail.Sender;
-                    outlook.ExchangeUser exchUser = sender.GetExchangeUser();
-                    if (null != exchUser)
-                        senderEmailAdd = exchUser.PrimarySmtpAddress;
-                    else
-                        senderEmailAdd = eMail.SenderEmailAddress;
-                    foreach (string subjectCriteria in subjectList)
-                    {
-                        foreach (string bodyCriteria in bodyList)
-                        {
-                            if (condition == "OR" && senderList.Contains(senderEmailAdd))
-                            {
-
-                                if ((eMail != null && eMail.Subject != null && eMail.Subject.ToLower().Contains(subjectCriteria.ToLower())) || (eMail.Body != null && eMail.Body.ToLower().Contains(bodyCriteria.ToLower())))
-                                {
-                                    DownLoadattachment(eMail, attachmentPath);
-                                }
-                            }
-                            else if (condition == "AND" && senderList.Contains(senderEmailAdd))
-                            {
-
-                                if ((eMail != null && eMail.Subject != null && eMail.Subject.ToLower().Contains(subjectCriteria.ToLower())) && (eMail.Body != null && eMail.Body.ToLower().Contains(bodyCriteria.ToLower())))
-                                {
-                                    DownLoadattachment(eMail, attachmentPath);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.FileLog(Common.LogType.Error, ex.ToString());
-
-            }
-        }
-
-
-        public FindItemsResults<Item> MailSearchCriteria2(string condition, ExchangeService exchangeService)
+       
+        /// <summary>/// Class for mail search criteria which dynamically
+        ///  takes the search pattern from the database 
+        /// </summary>
+        /// <param name="condition">The search condition is passed from the xml file</param>
+        /// <param name="exchangeService">The exchange service class is passed from the main program</param>
+        /// <returns></returns>
+        public FindItemsResults<Item> MailSearchCriteria(string condition, ExchangeService exchangeService)
         {
             FindItemsResults<Item> searchResult = null;
             bool mailExists = false;
@@ -368,6 +232,120 @@ namespace DocumentProcessing.Controller
                 Log.FileLog(Common.LogType.Error, ex.ToString());
             }
             return searchResult;
+        }
+
+        /// <summary>
+        /// Method applies the Mail search Criteria on Outlook
+        /// </summary>
+        /// <param name="app">Outlook application</param>
+        /// <param name="attachmentPath">Path to download the attachment</param>
+        public void OutlookMailSearch(outlook.Application app, string attachmentPath)
+        {
+            bool mailExists = false;
+            try
+            {
+                string condition = null;
+                // outlook.Application app = new outlook.Application();
+                string scope = "Inbox";
+                outlook.NameSpace outlookNamespace = app.GetNamespace("MAPI");
+                outlook.MAPIFolder folderInbox = outlookNamespace.GetDefaultFolder(outlook.OlDefaultFolders.olFolderInbox);
+                scope = "\'" + folderInbox.FolderPath + "\'";
+
+                XmlDocument reader = new XmlDocument();
+                reader.Load(@"D:\Project\SettingFile\Settings.xml");
+                if (!string.IsNullOrEmpty(reader.GetElementsByTagName("searchcondition")[0].InnerText))
+                    condition = reader.GetElementsByTagName("searchcondition")[0].InnerText;
+
+                DateTime date = DateTime.Today;
+
+                outlook.Items items = folderInbox.Items;
+                var dateFilteredMails = items.Restrict("[ReceivedTime] > '" + date.ToString("MM/dd/yyyy HH:mm") + "'");
+                if (dateFilteredMails.Count > 0)
+                {
+                    if (condition == "OR")
+                    {
+                        foreach (object eMail in dateFilteredMails)
+                        {
+                            if (eMail is outlook.MailItem)
+                            {
+                                outlook.MailItem mailItem = eMail as outlook.MailItem;
+                                string senderEmailAdd = string.Empty;
+                                outlook.AddressEntry sender = mailItem.Sender;
+                                outlook.ExchangeUser exchUser = sender.GetExchangeUser();
+                                if (null != exchUser)
+                                    senderEmailAdd = exchUser.PrimarySmtpAddress;
+                                else
+                                    senderEmailAdd = mailItem.SenderEmailAddress;
+
+                                if (senderList.Contains(senderEmailAdd))
+                                {
+                                    foreach (string subjectCriteria in subjectList)
+                                    {
+                                        mailExists = false;
+                                        if (mailItem.Subject != null && mailItem.Subject.ToLower().Contains(subjectCriteria.ToLower()))
+                                        {
+                                            DownLoadattachment(mailItem, attachmentPath);
+                                            mailExists = true;
+                                        }
+                                    }
+                                    if (!mailExists)
+                                    {
+                                        foreach (string bodyCriteria in bodyList)
+                                        {
+                                            if (mailItem.Body != null && mailItem.Body.ToLower().Contains(bodyCriteria.ToLower()))
+                                            {
+                                                DownLoadattachment(mailItem, attachmentPath);
+                                                mailExists = false;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if (condition == "AND")
+                    {
+                        foreach (object mail in dateFilteredMails)
+                        {
+                            if (mail is outlook.MailItem)
+                            {
+                                outlook.MailItem mailItem = mail as outlook.MailItem;
+                                string senderEmailAddress = string.Empty;
+                                outlook.AddressEntry senderName = mailItem.Sender;
+                                outlook.ExchangeUser exchangeUser = senderName.GetExchangeUser();
+                                if (null != exchangeUser)
+                                    senderEmailAddress = exchangeUser.PrimarySmtpAddress;
+                                else
+                                    senderEmailAddress = mailItem.SenderEmailAddress;
+                                if (senderList.Contains(senderEmailAddress))
+                                {
+                                    foreach (string subjectCriteria in subjectList)
+                                    {
+                                        if (mailItem.Subject != null && mailItem.Subject.ToLower().Contains(subjectCriteria.ToLower()))
+                                            mailExists = true;
+                                    }
+                                    if (mailExists)
+                                    {
+                                        foreach (string bodyCriteria in bodyList)
+                                        {
+                                            if (mailItem.Body != null && mailItem.Body.ToLower().Contains(bodyCriteria.ToLower()))
+                                            {
+                                                DownLoadattachment(mailItem, attachmentPath);
+                                                mailExists = false;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.FileLog(Common.LogType.Error, ex.ToString());
+
+            }
         }
 
     }

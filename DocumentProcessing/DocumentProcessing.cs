@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using Exception = System.Exception;
-using Microsoft.Office.Interop.Excel;
+using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 using DocumentProcessing.View;
 using DocumentProcessing.Ocr.DataExtraction;
@@ -29,6 +29,8 @@ namespace DocumentProcessing.DocumentProcess
         private string _logFilePath = @"D:\Project\Logs\";
         private string _processedFilePath = @"D:\Project\ProcessedFiles\";
         private string _errorFilePath = @"D:\Project\ErrorFiles\";
+        private string _outputFilePath = @"D:\Project\output result\";
+
 
         #endregion Testing Purpose
 
@@ -44,7 +46,7 @@ namespace DocumentProcessing.DocumentProcess
             if (!exists)
                 Directory.CreateDirectory(_logFilePath);
             Log.LogFilePath = _logFilePath;
-            
+
             try
             {
                 // Saswat Code Test purpose
@@ -132,7 +134,7 @@ namespace DocumentProcessing.DocumentProcess
             }
             catch (Exception ex)
             {
-                Log.FileLog(Common.LogType.Error,ex.ToString());
+                Log.FileLog(Common.LogType.Error, ex.ToString());
             }
 
         }//StartAbbyThread
@@ -198,24 +200,55 @@ namespace DocumentProcessing.DocumentProcess
         /// <param name="ocrType"></param>
         private void SaveOutputResult(Dictionary<string, string> dicExtractedData, Common.OcrType ocrType)
         {
-            Application excel = new Application();
-            // excel.Visible = true;
-            Workbook wb = excel.Workbooks.Open(@"D:\Project\output result\OutputResult.xlsx");
+            Excel.Application xlApp;
+            Excel.Workbook xlWorkBook;
+            Excel.Worksheet xlWorkSheet;
+            object misValue = System.Reflection.Missing.Value;
+            string filepath = @"D:\Project\output result\OutputResult.xlsx";
+            bool ifExists;
 
-            Worksheet sh = wb.Sheets[1];
+            xlApp = new Excel.Application();
+            if (xlApp == null)
+            {
+                Log.FileLog(Common.LogType.Error, "EXCEL could not be started.");
+                return;
+            }
+            ifExists = Directory.Exists(_outputFilePath);
+            if (!ifExists)
+            {
+                //string projectPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
+                //string folderName = Path.Combine(projectPath, _outputFilepath);
+                Directory.CreateDirectory(_outputFilePath);
+            }
+            FileInfo file = new FileInfo(filepath);
+            if (!file.Exists)
+            {
+                xlWorkBook = xlApp.Workbooks.Add(misValue);
+                xlWorkBook.SaveAs(filepath, Excel.XlFileFormat.xlWorkbookDefault, misValue, misValue,
+                                  false, false, Excel.XlSaveAsAccessMode.xlNoChange,
+                                  misValue, misValue, misValue, misValue, misValue);
+            }
+            xlWorkBook = xlApp.Workbooks.Open(filepath, misValue, false);
+            xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets[1];
+            if (xlWorkSheet == null)
+            {
+                Log.FileLog(Common.LogType.Error, "Worksheet could not be created.");
+            }
+
+            xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets.get_Item(1);
+
             if (dicExtractedData.Count > 0)
             {
                 int i = 0;
-                int lastRow = sh.Cells.SpecialCells(XlCellType.xlCellTypeLastCell, Type.Missing).Row;
+                int lastRow = xlWorkSheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell, Type.Missing).Row;
                 i = lastRow + 1;
                 // if document is not processed by template
                 int j = 2;
                 foreach (KeyValuePair<string, string> keyValue in dicExtractedData)
                 {
-                    sh.Cells[i, j] = keyValue.Value;
+                    xlWorkSheet.Cells[i, j] = keyValue.Value;
                     j++;
                 }
-
 
                 //if document type is PAN 
                 //sh.Cells[i, "A"] = 1;
@@ -229,13 +262,16 @@ namespace DocumentProcessing.DocumentProcess
                 //    sh.Cells[i, "H"] = "PAN";
 
             }
-            wb.Save(); wb.Close(true); excel.Quit();
-            Marshal.ReleaseComObject(sh);
-            Marshal.ReleaseComObject(wb);
-            Marshal.ReleaseComObject(excel);
+
+            xlWorkBook.Save();
+            xlWorkBook.Close();
+            xlApp.Quit();
+
+            Marshal.ReleaseComObject(xlWorkSheet);
+            Marshal.ReleaseComObject(xlWorkBook);
+            Marshal.ReleaseComObject(xlApp);
             Marshal.CleanupUnusedObjectsInCurrentContext();
 
         }//SaveOutputResult
-
     }//DocumentProcessing
 }//DocumentProcessing

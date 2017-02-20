@@ -52,6 +52,7 @@ namespace DocumentProcessing.Model
                     }
                 }
             }
+            //Error handling
             catch (Exception ex)
             {
                 Log.FileLog(Common.LogType.Error, ex.ToString());

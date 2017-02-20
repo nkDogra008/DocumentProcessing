@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace DocumentProcessing.Controller
 {
@@ -134,12 +135,9 @@ namespace DocumentProcessing.Controller
                 //From Exchange server  (EWS)
                 if (_serverType == Common.ServerType.ExchangeServer.ToString())
                     GetAttachmentsFromExchangeServer();
+                //From Outlook
                 else if (_serverType == Common.ServerType.Outlook.ToString())
-                {
                     GetAttachmentsFromOutlook();
-                }
-                // From Outlook (Using outlook Interop)
-
 
             }
             catch (Exception ex)
@@ -169,7 +167,7 @@ namespace DocumentProcessing.Controller
                 exchangeService.Url = new Uri(GetMailServerDetails.MailboxServer);
 
                 //Class Mail search criteria is called and the returned value is stored in a variable
-                FindItemsResults<Item> findResults = mailSearchController.MailSearchCriteria2(_mailSearchCondition, exchangeService);
+                FindItemsResults<Item> findResults = mailSearchController.MailSearchCriteria(_mailSearchCondition, exchangeService);
 
                 MetadataController metadataController = new MetadataController();
                 List<Metadata> metadataList = metadataController.GetAllMetadataDetails();
@@ -193,8 +191,9 @@ namespace DocumentProcessing.Controller
                             foreach (Attachment attachment in attachmentCollection)
                             {
                                 string fileName = attachment.Name;
+                                var arrFileDetails = attachment.Name.Split('.');
                                 //The extensions extracted from the attachment name and stored in a variable
-                                var fileExtension = attachment.Name.Split('.')[1];
+                                var fileExtension = arrFileDetails[arrFileDetails.Length - 1];
                                 if (fileName.ToLower().Contains(type.ToLower()))
                                 {
                                     string supportedFormats = metadataList.Find(a => a.Type.ToLower() == type.ToLower()).Format;
@@ -227,8 +226,6 @@ namespace DocumentProcessing.Controller
             {
                 Log.FileLog(Common.LogType.Error, ex.ToString());
             }
-            Folder folder = Folder.Bind(exchangeService, WellKnownFolderName.SearchFolders);
-            folder.Empty(DeleteMode.HardDelete, true);
         }
 
         /// <summary>
@@ -243,13 +240,11 @@ namespace DocumentProcessing.Controller
 
                 //Uses the GetApplicationObject method to login into Outlook
                 GetApplicationObject();
-
-                //Creates an instance of Outlook
-                Outlook.Application application = new Outlook.Application();
-
+                
+                //await Task.Delay(3000);
+                var application = GetApplicationObject().Application;
                 //Gets the root folder of Outlook
                 Outlook.Folder selectedFolder = application.Session.DefaultStore.GetRootFolder() as Outlook.Folder;
-
 
                 mailSearchController.OutlookMailSearch(application, _saveAttachmentPath);
 
@@ -262,10 +257,6 @@ namespace DocumentProcessing.Controller
 
                 Log.FileLog(Common.LogType.Error, ex.ToString());
             }
-            /// <summary>
-            /// This class contains the method to login into Outlook
-            /// </summary>
-            /// 
         }
 
         /// <summary>
@@ -287,13 +278,15 @@ namespace DocumentProcessing.Controller
                 }
                 else
                 {
+                    Process.Start("OUTLOOK.EXE");
+                    Thread.Sleep(4000);
                     // If not, create a new instance of Outlook and log on to the default profile
-                    application = new Outlook.Application();
-                    //Gets the MAPI namespace
-                    Outlook.NameSpace nameSpace = application.GetNamespace("MAPI");
-                    //Login into the outlook
-                    nameSpace.Logon(GetMailServerDetails.Username, GetMailServerDetails.Password, Missing.Value, Missing.Value);
-                    nameSpace = null;
+                    //application = new Outlook.Application();
+                    ////Gets the MAPI namespace
+                    //Outlook.NameSpace nameSpace = application.GetNamespace("MAPI");
+                    ////Login into the outlook
+                    //nameSpace.Logon(GetMailServerDetails.Username, GetMailServerDetails.Password, Missing.Value, Missing.Value);
+                    //nameSpace = null;
                 }
 
             }
