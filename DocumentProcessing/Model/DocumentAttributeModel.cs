@@ -26,9 +26,9 @@ namespace DocumentProcessing.Model
         /// <summary>
         /// This method gets all required Attributes based upon Attribute Id
         /// </summary>
-        /// <param name="AttributeId"></param>Represents type Id of document(eg Invoice,passport etc)
+        /// <param name="metadataTypeId"></param>Represents type Id of document(eg Invoice,passport etc)
         /// <returns></returns>
-        public List<DocumentAttributes> GetAttributesById(int AttributeId)
+        public List<DocumentAttributes> GetAttributesById(int metadataTypeId)
         {
             List<DocumentAttributes> listAttributes = new List<DocumentAttributes>();
             DocumentAttributes attributes;
@@ -37,13 +37,13 @@ namespace DocumentProcessing.Model
             {
                 string spName = "sp_getAttributesById";
                 DbCommand dbCommand = _dbConnection.GetStoredProcCommand(spName);
-                _dbConnection.AddInParameter(dbCommand, "AttributeId", DbType.Int32, AttributeId);
+                _dbConnection.AddInParameter(dbCommand, "metadataTypeId", DbType.Int32, metadataTypeId);
                 using (reader = _dbConnection.ExecuteReader(dbCommand))
                 {
                     while (reader.Read())
                     {
                         attributes = new DocumentAttributes();
-                        attributes.A_Id = reader.GetInt32(reader.GetOrdinal("Id"));
+                        attributes.AttributeId = reader.GetInt32(reader.GetOrdinal("AttributeId"));
                         attributes.AttributeName = reader.GetString(reader.GetOrdinal("AttributeName"));
                         listAttributes.Add(attributes);
                     }

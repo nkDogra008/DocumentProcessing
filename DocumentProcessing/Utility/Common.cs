@@ -62,12 +62,6 @@ namespace DocumentProcessing.Utility
             KYC
 
 
-        }//OcrTypes
-
-        /// <summary>
-        /// Gets and sets Unique Id depending upon the type of document(eg. Invoice,Passport etc)
-        /// </summary>
-        public int AttributeId { get; set; }
-
+        }//OcrType
     }//Common
 }

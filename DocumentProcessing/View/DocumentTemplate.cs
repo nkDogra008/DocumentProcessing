@@ -34,12 +34,12 @@ namespace DocumentProcessing.View
         /// <summary>
         /// Gets and sets unique Id for each document type(eg: Pan,Invoice etc.)
         /// </summary>
-        public int DocTypeId { get; set; }
+        public int metadataTypeId { get; set; }
 
         /// <summary>
-        /// Gets Attribute Id of specific attribute
+        /// Gets and sets Id of specific attribute
         /// </summary>
-        public int A_Id { get; set; }
+        public int AttributeId { get; set; }
 
         /// <summary>
         /// To get and set specific row in text file

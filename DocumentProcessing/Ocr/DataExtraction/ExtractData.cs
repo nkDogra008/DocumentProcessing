@@ -18,7 +18,7 @@ namespace DocumentProcessing.Ocr.DataExtraction
         private string _pathErrorFilesFolder;
         private string _pathProcessedFilesFolder;
         private Common.OcrType _typeOfOcr;
-        private int attributeId;
+        private int metadataTypeId;
         private string type;
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace DocumentProcessing.Ocr.DataExtraction
                                 if (file.Name.ToLower().Contains(metadata.Type.ToLower()))
                                 {
                                     type = metadata.Type;
-                                    attributeId = metadata.AttributeId;
+                                    metadataTypeId = metadata.MetadataTypeId;
                                 }
                             }
 
@@ -116,7 +116,7 @@ namespace DocumentProcessing.Ocr.DataExtraction
                                         // Example there is attribute present on document
                                         if ((type.ToLower() != Common.SupportedDocumentType.Pan.ToString().ToLower()))
                                         {
-                                            attributeList = attributeController.GetAttributesById(attributeId);
+                                            attributeList = attributeController.GetAttributesById(metadataTypeId);
                                             /*
                                             listOfAtttributesToGet = new List<string>() { "Name*", "Date of Birth*", "Mother's Name*", "Name of Spouse", "Country Of Birth", "UID",
                                             "Grand Total","Amount","Order ID:","Sold By","Order Date:","VAT/TIN:","Service tax #:","Invoice Date:"*/

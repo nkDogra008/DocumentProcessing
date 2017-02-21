@@ -45,7 +45,6 @@ namespace DocumentProcessing.Model
                         metadata.Type = reader.GetString(reader.GetOrdinal("Type"));
                         metadata.Format = reader.GetString(reader.GetOrdinal("Format"));
                         metadata.MetadataTypeId = reader.GetInt32(reader.GetOrdinal("MetadataTypeId"));
-                        metadata.AttributeId = reader.GetInt32(reader.GetOrdinal("AttributeId"));
                         listMetadata.Add(metadata);                     
                     }
                 }              

@@ -20,19 +20,20 @@ namespace DocumentProcessing.View
         }//DocumentAttributes
 
         /// <summary>
-        /// Gets and sets document attribute name
-        /// </summary>
-        public string AttributeName { get; set; }
-
-        /// <summary>
-        /// Gets and sets Attribute Id of specific document
+        /// Gets and sets unique Id for specific attribute
         /// </summary>
         public int AttributeId { get; set; }
 
         /// <summary>
-        /// Gets and sets id of specific attribute
+        /// Gets and sets attribute name for each Id
         /// </summary>
-        public int A_Id { get; set; }
+        public string AttributeName { get; set; }
+
+        /// <summary>
+        /// Gets and sets id of specific document (eg: Pan,Passport etc)
+        /// </summary>
+        public int MetadataTypeId { get; set; }
+
 
     }//DocumentAttributes
 }

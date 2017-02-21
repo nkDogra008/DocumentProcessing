@@ -25,20 +25,20 @@ namespace DocumentProcessing.Controller
         /// <summary>
         /// This method gets the required attributes depending upon Attribute Id
         /// </summary>
-        /// <param name="AttributeId"></param>Represents the Id for each document type(eg: Invoice,Aadhaar etc)
+        /// <param name="metadataTypeId"></param>Represents the Id for each document type(eg: Invoice,Aadhaar etc)
         /// <returns></returns>
-        public List<DocumentAttributes> GetAttributesById(int AttributeId)
+        public List<DocumentAttributes> GetAttributesById(int metadataTypeId)
         {
             List<DocumentAttributes> documentAttributes = null;
             try
             {
-                if (AttributeId > 0)
+                if (metadataTypeId > 0)
                 {
                     DocumentAttributeModel attributeModel = new DocumentAttributeModel();
-                    documentAttributes = attributeModel.GetAttributesById(AttributeId);
+                    documentAttributes = attributeModel.GetAttributesById(metadataTypeId);
                 }
                 else
-                    Log.FileLog(Common.LogType.ApplicationError, "Unable to find any records for Attribute Id: " + AttributeId);
+                    Log.FileLog(Common.LogType.ApplicationError, "Unable to find any records for metadata Type Id: " + metadataTypeId);
             }
             catch (Exception ex)
             {
